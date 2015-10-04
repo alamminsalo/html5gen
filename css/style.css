@@ -1,0 +1,11 @@
+body{
+    position:relative;
+}
+
+#rootCanvas{
+    display:inline-block;
+}
+
+canvas{
+    position:fixed;
+}

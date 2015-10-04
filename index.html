@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Load the Paper.js library -->
+	<!--<script type="text/javascript" src="js/paper-full.min.js"></script>-->
+	<!-- Load external PaperScript and associate it with myCanvas -->
+	<script type="text/javascript" src="js/tools.js"></script>
+	<script type="text/javascript" src="js/spin.min.js"></script>
+	<script type="text/javascript" src="js/interface.js"></script>
+	<script type="text/javascript" src="js/gen.js"></script>
+	<script type="text/javascript" src="js/stackblur.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+	<table><tr>
+		<td>
+		<span id="panel">
+			<input type="button" value="Generate!" onclick="generatePressed()"/>
+
+			<br/>
+			<p><b>Image options</b></p>
+			<p>Blur<input type="checkbox" id="blurOn"/></p>
+			<p>Blur radius<input type="text" id="blurAmt"/></p>
+			<p>Noise<input type="checkbox" id="noiseOn"/></p>
+			<p>Noise opacity<input type="text" id="noiseAmt"/></p>
+
+			<br/>
+			<p><b>Objects and layers</b></p>
+			<p>Squares<input type="checkbox" id="sqOn"/></p>
+			<p>Triangles<input type="checkbox" id="triOn"/></p>
+			<p>Circles<input type="checkbox" id="ciOn"/></p>
+			<p>Object size<input type="input" id="sizeVal"/></p>
+			<p>Objects per layer<input type="text" id="obAmt"/></p>
+			<p>Layers<input type="text" id="layerAmt"/></p>
+
+			<br/>
+			<p><b>Color options</b></p>
+			<p>Randomize<input type="checkbox" id="randColorOn"/></p>
+			<p>Root color<input type="color" pattern="#[a-f0-9]{6}" id="colorInput" placeholder="#000000"/></p>
+
+			<br/>
+			<p><b>Canvas dimensions</b></p>
+			<p>Width<input type="text" value="" id="widthBox"/></p>
+			<p>Height<input type="text" value="" id="heightBox"/></p>
+		</span>
+		</td>
+		<td>
+			<span id="rootCanvas"></span>
+		</td>
+	</tr></table>
+</body>
+</html>
