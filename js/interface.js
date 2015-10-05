@@ -11,9 +11,10 @@ var squaresOn = null;
 var trianglesOn = null;
 var circlesOn = null;
 var obSize = null;
-var colorRand = null;
+var colorRand, colorPerLayer, colorCh;
 var colorInput = null;
 var shadowOn, shadowColor, shadowX, shadowY, shadowRad;
+var depth;
 
 function setupInterface(){
     blurAmt = document.getElementById("blurAmt");
@@ -70,6 +71,15 @@ function setupInterface(){
     shadowX.value = userOptions.shadow_offsetX;
     shadowY = document.getElementById("shY");
     shadowY.value = userOptions.shadow_offsetY;
+
+    colorPerLayer = document.getElementById('colorPerLayer');
+    colorPerLayer.checked = userOptions.colorPerLayer;
+
+    colorCh = document.getElementById('colorCh');
+    colorCh.value = userOptions.colorChAmt;
+
+    depth = document.getElementById('depth');
+    depth.value = userOptions.depth;
 }
 
 function updateValues(){
@@ -94,6 +104,8 @@ function updateValues(){
     userOptions.shadow_offsetY = shadowY.value;
     userOptions.shadow_radius = shadowRad.value;
 
+    userOptions.colorChAmt = colorCh.value;
+
     var rgb = hexToRgb(colorInput.value);
     rgb.a = 255;
 
@@ -105,7 +117,10 @@ function updateValues(){
     rootDiv.width = canvasOptions.width;
     rootDiv.height = canvasOptions.height;
 
-    console.log(userOptions, canvasOptions);
+    userOptions.depth = depth.value;
+
+    userOptions.colorPerLayer = colorPerLayer.checked;
+    //console.log(userOptions, canvasOptions);
 }
 
 function generatePressed(){

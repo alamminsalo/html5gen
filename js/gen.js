@@ -14,27 +14,30 @@ var userOptions = {
     blurAmount: 8,
     noise: false,
     noiseExtra: true,
-    noiseOpacity: 40,
+    noiseOpacity: 30,
     shadows: false,
     shadow_color: {r: 0, g: 0, b: 0, a: 255},
     shadow_radius: 2,
     shadow_offsetX: 2,
     shadow_offsetY: 2,
     objects_in_layer: 10,
-    layers: 4,
+    depth: 1.6,
+    layers: 6,
     triangles: false,
     squares: true,
     circles: false,
-    size: 5,
+    size: 14,
     rootColor: {r: 0, g: 0, b: 0, a: 255},
-    randomColor: true
+    randomColor: true,
+    colorPerLayer: false,
+    colorChAmt: 100
 }
 
 function getRandomColor() { //Gives nice midtone-colors
     return {
-        r: Math.floor(Math.random() * 100 + 100),
-        g: Math.floor(Math.random() * 100 + 100),
-        b: Math.floor(Math.random() * 100 + 100),
+        r: Math.floor(Math.random() * 100 + 120),
+        g: Math.floor(Math.random() * 100 + 120),
+        b: Math.floor(Math.random() * 100 + 120),
         a: 255
     };
 }
@@ -103,9 +106,9 @@ function generate() {
                 rootCanvas,
                 userOptions.objects_in_layer,
                 userOptions.rootColor,
-                100,
+                userOptions.colorChAmt,
                 noiseCanvas,
-                Math.random() * 10 + 20 + i * userOptions.size
+                (Math.random() * 20 + userOptions.size) * i * userOptions.depth
             );
         }
         if (userOptions.squares) {
@@ -113,13 +116,20 @@ function generate() {
                 rootCanvas,
                 userOptions.objects_in_layer,
                 userOptions.rootColor,
-                100,
+                userOptions.colorChAmt,
                 noiseCanvas,
-                Math.random() * 10 + 20 + i * userOptions.size
+                (Math.random() * 20 + userOptions.size) * i * userOptions.depth
             );
         }
         if (userOptions.circles) {
-            //TODO
+            generateCircles(
+                rootCanvas,
+                userOptions.objects_in_layer,
+                userOptions.rootColor,
+                userOptions.colorChAmt,
+                noiseCanvas,
+                (Math.random() * 20 + userOptions.size) * i * userOptions.depth
+            );
         }
     }
     //Finishing touches
@@ -212,8 +222,12 @@ function getVariatedColor(color, amount) {
 }
 
 function generateTriangles(parent, amount, color, cvar, noise, size) {
+    var color2 = getVariatedColor(color, cvar);
     for (var i = 0; i < amount; i++) {
-        drawTriangle(parent, getRandomAlignedTriangle(parent, size), getVariatedColor(color, cvar), noise);
+        if (!userOptions.colorPerLayer){
+            color2 = getVariatedColor(color, cvar);
+        }
+        drawTriangle(parent, getRandomAlignedTriangle(parent, size), color2, noise);
     }
 }
 
@@ -259,13 +273,6 @@ function blur(parent, radius) {
     StackBlur.canvasRGBA(parent, parent.x, parent.y, parent.width, parent.height, radius);
 }
 
-/*function blurStacks(radius) {
-    for (var i = 0; i < canvasStack.length - 1; i++) {
-        var r = Math.floor(radius * (canvasStack.length - i - 1));
-        blur(canvasStack[i], r);
-    }
-}*/
-
 function generateBackground(color, noise) {
     rootCanvas = rootCanvas != null ? rootCanvas : getCanvas();
     if (rootCanvas) {
@@ -280,8 +287,12 @@ function generateBackground(color, noise) {
 }
 
 function generateSquares(parent, amount, color, cvar, noise, size) {
+    var color2 = getVariatedColor(color, cvar);
     for (var i = 0; i < amount; i++) {
-        drawRectangle(parent, getRandomRectangle(parent, (Math.random() + .5) * size), getVariatedColor(color, cvar), noise);
+        if (!userOptions.colorPerLayer){
+            color2 = getVariatedColor(color, cvar);
+        }
+        drawRectangle(parent, getRandomRectangle(parent, size), color2, noise);
     }
 }
 
@@ -328,5 +339,49 @@ function drawRectangle(parent, rect, color, noise) {
     }
     if (noise) {
         c2.drawImage(noise, rect.x, rect.y, rect.width, rect.height);
+    }
+}
+
+function generateCircles(parent, amount, color, cvar, noise, size){
+    var color2 = getVariatedColor(color, cvar);
+    for (var i = 0; i < amount; i++) {
+        if (!userOptions.colorPerLayer){
+            color2 = getVariatedColor(color, cvar);
+        }
+        drawCircle(parent, getRandomPoint(parent), color2, size, noise);
+    }
+}
+
+function drawCircle(parent, point, color, size, noise){
+    if (parent == null)
+        return;
+    var c2 = parent.getContext('2d');
+    var radius = size/2;
+    if (color) {
+        c2.beginPath();
+        c2.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
+        c2.arc(point.x, point.y, radius, 0, 2 * Math.PI, false);
+        if (userOptions.shadows){
+            c2.shadowColor = 'rgba(' + userOptions.shadow_color.r + ',' + userOptions.shadow_color.g + ',' + userOptions.shadow_color.b + ')';
+            c2.shadowBlur = userOptions.shadow_radius;
+            c2.shadowOffsetX = userOptions.shadow_offsetX;
+            c2.shadowOffsetY = userOptions.shadow_offsetY;
+        }
+        c2.fill();
+    }
+
+    if (noise) {
+        c2.save();
+        c2.clip();
+        var box = {
+            x: point.x - radius,
+            y: point.y - radius,
+            x2: point.x + radius,
+            y2: point.y + radius
+        };
+
+        c2.drawImage(noise,box.x,box.y,box.x2-box.x,box.y2-box.y);
+        c2.restore();
+
     }
 }

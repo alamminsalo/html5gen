@@ -17,8 +17,12 @@
 		<span id="panel">
 			<input type="button" value="Generate!" onclick="generatePressed()"/>
 
+			<fieldset><legend>Canvas dimensions</legend>
+				<p>Width<input type="text" value="" id="widthBox"/></p>
+				<p>Height<input type="text" value="" id="heightBox"/></p>
+			</fieldset>
 
-			<fieldset><legend>Image options</legend>
+			<fieldset><legend>Filters</legend>
 				<p>Blur<input type="checkbox" id="blurOn"/></p>
 				<p>Blur radius<input type="text" id="blurAmt"/></p>
 				<p>
@@ -35,25 +39,25 @@
 				<p>Object size<input type="input" id="sizeVal"/></p>
 				<p>Objects per layer<input type="text" id="obAmt"/></p>
 				<p>Layers<input type="text" id="layerAmt"/></p>
-
-				<p>Shadows<input type="checkbox" id="shOn"/></p>
-				<p>Radius<input type="input" id="shRad"/></p>
-				<p>OffsetX<input type="input" id="shX"/></p>
-				<p>OffsetY<input type="input" id="shY"/></p>
-
+				<p>Depth<input type="text" id="depth"/></p>
 			</fieldset>
-
 
 			<fieldset><legend>Color options</legend>
 			<p>Randomize<input type="checkbox" id="randColorOn"/></p>
+			<p>One per layer<input type="checkbox" id="colorPerLayer"/></p>
+			<p>Change amount<input type="text" id="colorCh"/></p>
 			<p>Root color<input type="color" pattern="#[a-f0-9]{6}" id="colorInput" placeholder="#000000"/></p>
-			<p>Shadow color<input type="color" id="shCol"/></p>
 			</fieldset>
 
-			<fieldset><legend>Canvas dimensions</legend>
-			<p>Width<input type="text" value="" id="widthBox"/></p>
-			<p>Height<input type="text" value="" id="heightBox"/></p>
+			<fieldset><legend>Shadows</legend>
+				<p>Draw shadows<input type="checkbox" id="shOn"/></p>
+				<p>Color<input type="color" id="shCol"/></p>
+				<p>Radius<input type="input" id="shRad"/></p>
+				<p>OffsetX<input type="input" id="shX"/></p>
+				<p>OffsetY<input type="input" id="shY"/></p>
 			</fieldset>
+
+
 		</span>
 		</td>
 		<td>
