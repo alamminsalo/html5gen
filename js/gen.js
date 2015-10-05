@@ -1,9 +1,3 @@
-//var canvasStack = [];
-//var topCanvas = null;
-
-Array.prototype.last = function () {
-    return this[this.length - 1];
-}
 
 var rootDiv = null;
 var rootCanvas = null;
@@ -11,24 +5,28 @@ var rootCanvas = null;
 var canvasOptions = {
     x: 0,
     y: 0,
-    width: 800,
-    height: 640
+    width: 1920,
+    height: 1080
 }
 
 var userOptions = {
     blur: false,
-    blurAmount: .3,
+    blurAmount: 8,
     noise: false,
-    noiseOpacity: 0.4,
-    shadows: true,
-    shadow_size: 1,
+    noiseExtra: true,
+    noiseOpacity: 40,
+    shadows: false,
+    shadow_color: {r: 0, g: 0, b: 0, a: 255},
+    shadow_radius: 2,
+    shadow_offsetX: 2,
+    shadow_offsetY: 2,
     objects_in_layer: 10,
     layers: 4,
     triangles: false,
     squares: true,
     circles: false,
-    size: 2,
-    rootColor: {r: 0, g: 0, b: 0, a: 1},
+    size: 5,
+    rootColor: {r: 0, g: 0, b: 0, a: 255},
     randomColor: true
 }
 
@@ -41,10 +39,26 @@ function getRandomColor() { //Gives nice midtone-colors
     };
 }
 
+function addToColor(color,value){
+    color.r += value;
+    color.g += value;
+    color.b += value;
+    color.r = Math.min(Math.max(color.r,0),255);
+    color.g = Math.min(Math.max(color.g,0),255);
+    color.b = Math.min(Math.max(color.b,0),255);
+}
+
 window.onload = function () {
     setupInterface();
     init();
 }
+
+var size = 100;
+function resizeCanvas(){
+    size = size < 100 ? 100 : 60;
+    rootCanvas.style.height = size + '%';
+}
+
 
 function init() {
     rootDiv = document.getElementById("rootCanvas");
@@ -57,14 +71,23 @@ function init() {
 function generate() {
     clear();
 
-    addSpinner();
+    //addSpinner();
 
     if (userOptions.randomColor) {
         userOptions.rootColor = getRandomColor();
     }
     colorInput.value = rgbToHex(userOptions.rootColor.r,userOptions.rootColor.g,userOptions.rootColor.b);
+    shadowColor.value = rgbToHex(userOptions.shadow_color.r,userOptions.shadow_color.g,userOptions.shadow_color.b)
 
-    generateBackground(userOptions.rootColor, userOptions.noise ? userOptions.noiseOpacity : null); //Create root canvas
+    var noiseCanvas = null;
+    if (userOptions.noise) {
+        noiseCanvas = document.createElement("canvas");
+        noiseCanvas.width = canvasOptions.width;
+        noiseCanvas.height = canvasOptions.height;
+        generateNoise(noiseCanvas, userOptions.noiseOpacity);
+    }
+
+    generateBackground(userOptions.rootColor, noiseCanvas); //Create root canvas
 
     if (!userOptions.objects_in_layer || userOptions.objects_in_layer < 1){
         console.log('error:', userOptions.objects_in_layer);
@@ -72,7 +95,6 @@ function generate() {
     }
 
     for (var i=0; i < userOptions.layers; i++) {
-        console.log(i);
         if (userOptions.blur && i > 0) { //Do not blur bottom layer alone
             blur(rootCanvas, userOptions.blurAmount);
         }
@@ -82,7 +104,7 @@ function generate() {
                 userOptions.objects_in_layer,
                 userOptions.rootColor,
                 100,
-                userOptions.noise ? userOptions.noiseOpacity : null,
+                noiseCanvas,
                 Math.random() * 10 + 20 + i * userOptions.size
             );
         }
@@ -92,7 +114,7 @@ function generate() {
                 userOptions.objects_in_layer,
                 userOptions.rootColor,
                 100,
-                userOptions.noise ? userOptions.noiseOpacity : null,
+                noiseCanvas,
                 Math.random() * 10 + 20 + i * userOptions.size
             );
         }
@@ -101,10 +123,10 @@ function generate() {
         }
     }
     //Finishing touches
-    if (userOptions.blur && userOptions.noise) {
-        generateNoise(rootCanvas, userOptions.noise);
+    if (userOptions.noise && userOptions.noiseExtra) {
+        drawRectangle(rootCanvas, canvasOptions, null, noiseCanvas);
     }
-    removeSpinner();
+    rootCanvas.style.height = size + '%';
 }
 
 function clear() {
@@ -198,18 +220,22 @@ function generateTriangles(parent, amount, color, cvar, noise, size) {
 function drawTriangle(parent, points, color, noise) {
     if (parent == null)
         return;
-    //console.log('TRI:', parent, points, color);
     var c2 = parent.getContext('2d');
-    c2.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
-    c2.beginPath();
-    c2.moveTo(points[0].x, points[0].y);
-    c2.lineTo(points[1].x, points[1].y);
-    c2.lineTo(points[2].x, points[2].y);
-    c2.closePath();
-    c2.fill();
-
-    //c2.strokeStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.g + ',' + '255' + ')';
-    //c2.stroke();
+    if (color) {
+        c2.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
+        c2.beginPath();
+        c2.moveTo(points[0].x, points[0].y);
+        c2.lineTo(points[1].x, points[1].y);
+        c2.lineTo(points[2].x, points[2].y);
+        c2.closePath();
+        if (userOptions.shadows){
+            c2.shadowColor = 'rgba(' + userOptions.shadow_color.r + ',' + userOptions.shadow_color.g + ',' + userOptions.shadow_color.b + ')';
+            c2.shadowBlur = userOptions.shadow_radius;
+            c2.shadowOffsetX = userOptions.shadow_offsetX;
+            c2.shadowOffsetY = userOptions.shadow_offsetY;
+        }
+        c2.fill();
+    }
 
     if (noise) {
         c2.save();
@@ -219,15 +245,9 @@ function drawTriangle(parent, points, color, noise) {
             y: Math.min(points[0].y, points[1].y, points[2].y),
             x2: Math.max(points[0].x, points[1].x, points[2].x),
             y2: Math.max(points[0].y, points[1].y, points[2].y)
-        }
-        //console.log(box, box.width(), box.height());
-        for (var x = box.x; x < box.x2; x++) {
-            for (var y = box.y; y < box.y2; y++) {
-                var number = Math.floor(Math.random() * 60);
-                c2.fillStyle = "rgba(" + number + "," + number + "," + number + "," + noise + ")";
-                c2.fillRect(x, y, 1, 1);
-            }
-        }
+        };
+
+        c2.drawImage(noise,box.x,box.y,box.x2-box.x,box.y2-box.y);
         c2.restore();
 
     }
@@ -239,34 +259,12 @@ function blur(parent, radius) {
     StackBlur.canvasRGBA(parent, parent.x, parent.y, parent.width, parent.height, radius);
 }
 
-function blurStacks(radius) {
+/*function blurStacks(radius) {
     for (var i = 0; i < canvasStack.length - 1; i++) {
         var r = Math.floor(radius * (canvasStack.length - i - 1));
-        console.log(r);
         blur(canvasStack[i], r);
     }
-}
-
-
-function generateNoise(parent, opacity) {
-    if (parent == null)
-        return;
-    var ctx = parent.getContext('2d');
-    console.log(ctx);
-    opacity = opacity || .2;
-
-    for (var x = 0; x < parent.width; x++) {
-        for (var y = 0; y < parent.height; y++) {
-            var number = Math.floor(Math.random() * 60);
-
-            var pixel = ctx.getImageData(x, y, 1, 1);
-            if (!pixel.data[0] && !pixel.data[1] && !pixel.data[2]) {
-                ctx.fillStyle = "rgba(" + number + "," + number + "," + number + "," + opacity + ")";
-                ctx.fillRect(x, y, 1, 1);
-            }
-        }
-    }
-}
+}*/
 
 function generateBackground(color, noise) {
     rootCanvas = rootCanvas != null ? rootCanvas : getCanvas();
@@ -279,7 +277,6 @@ function generateBackground(color, noise) {
         )
         rootDiv.appendChild(rootCanvas);
     }
-    //flattenImage();
 }
 
 function generateSquares(parent, amount, color, cvar, noise, size) {
@@ -298,28 +295,38 @@ function getRandomRectangle(parent, size) {
     }
 }
 
-function drawRectangle(parent, rect, color, noise) {
-    var c2 = parent.getContext('2d');
-    c2.fillStyle = 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
-    c2.fillRect(rect.x, rect.y, rect.width, rect.height);
-    if (noise) {
-        for (var x = rect.x; x < rect.x + rect.width; x++) {
-            for (var y = rect.y; y < rect.y + rect.height; y++) {
-                var number = Math.floor(Math.random() * 60);
-                c2.fillStyle = "rgba(" + number + "," + number + "," + number + "," + noise + ")";
-                c2.fillRect(x, y, 1, 1);
-            }
-        }
+function generateNoise(canvas, alpha, x, y, width, height) {
+    x = x || 0;
+    y = y || 0;
+    width = width || canvas.width;
+    height = height || canvas.height;
+    alpha = alpha || 255;
+    var g = canvas.getContext("2d"),
+        imageData = g.getImageData(x, y, width, height),
+        random = Math.random,
+        pixels = imageData.data,
+        n = pixels.length,
+        i = 0;
+    while (i < n) {
+        pixels[i++] = pixels[i++] = pixels[i++] = (random() * 60) | 0;
+        pixels[i++] = alpha;
     }
+    g.putImageData(imageData, x, y);
 }
 
-function drawShape(parent, points, color) {
+function drawRectangle(parent, rect, color, noise) {
     var c2 = parent.getContext('2d');
-    c2.fillStyle = 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
-    c2.beginPath();
-    c2.moveTo(points[0].x, points[0].y);
-    for (var i = 1; i < points.length; i++)
-        c2.lineTo(points[i].x, points[i].y);
-    c2.closePath();
-    c2.fill();
+    if (color) {
+        c2.fillStyle = 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
+        if (userOptions.shadows){
+            c2.shadowColor = 'rgb(' + userOptions.shadow_color.r + ',' + userOptions.shadow_color.g + ',' + userOptions.shadow_color.b + ')';
+            c2.shadowBlur = userOptions.shadow_radius;
+            c2.shadowOffsetX = userOptions.shadow_offsetX;
+            c2.shadowOffsetY = userOptions.shadow_offsetY;
+        }
+        c2.fillRect(rect.x, rect.y, rect.width, rect.height);
+    }
+    if (noise) {
+        c2.drawImage(noise, rect.x, rect.y, rect.width, rect.height);
+    }
 }
