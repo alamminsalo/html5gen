@@ -5,7 +5,3 @@ body{
 #rootCanvas{
     display:inline-block;
 }
-
-canvas{
-    position:fixed;
-}

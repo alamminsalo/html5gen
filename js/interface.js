@@ -2,6 +2,7 @@ var blurAmt = null;
 var noiseAmt = null;
 var blurOn = null;
 var noiseOn = null;
+var noiseExtra = null;
 var widthBox = null;
 var heightBox = null;
 var objAmt = null;
@@ -12,6 +13,7 @@ var circlesOn = null;
 var obSize = null;
 var colorRand = null;
 var colorInput = null;
+var shadowOn, shadowColor, shadowX, shadowY, shadowRad;
 
 function setupInterface(){
     blurAmt = document.getElementById("blurAmt");
@@ -25,6 +27,9 @@ function setupInterface(){
 
     noiseOn = document.getElementById("noiseOn");
     noiseOn.checked = userOptions.noise;
+
+    noiseExtra = document.getElementById("noiseEx");
+    noiseExtra.checked = userOptions.noiseExtra;
 
     widthBox = document.getElementById("widthBox");
     widthBox.value = canvasOptions.width;
@@ -54,6 +59,17 @@ function setupInterface(){
 
     colorRand = document.getElementById("randColorOn");
     colorRand.checked = userOptions.randomColor;
+
+    shadowOn = document.getElementById("shOn");
+    shadowOn.checked = userOptions.shadows;
+    shadowColor = document.getElementById("shCol");
+    shadowColor.value = rgbToHex(userOptions.shadow_color.r,userOptions.shadow_color.g,userOptions.shadow_color.b);
+    shadowRad = document.getElementById("shRad");
+    shadowRad.value = userOptions.shadow_radius;
+    shadowX = document.getElementById("shX");
+    shadowX.value = userOptions.shadow_offsetX;
+    shadowY = document.getElementById("shY");
+    shadowY.value = userOptions.shadow_offsetY;
 }
 
 function updateValues(){
@@ -68,6 +84,15 @@ function updateValues(){
     userOptions.circles = circlesOn.checked;
     userOptions.size = obSize.value;
     userOptions.randomColor = colorRand.checked;
+    userOptions.noiseExtra = noiseExtra.checked;
+    userOptions.shadows = shadowOn.checked;
+    var shadowRgb = hexToRgb(shadowColor.value);
+    shadowRgb.a = 255;
+
+    userOptions.shadow_color = shadowRgb;
+    userOptions.shadow_offsetX = shadowX.value;
+    userOptions.shadow_offsetY = shadowY.value;
+    userOptions.shadow_radius = shadowRad.value;
 
     var rgb = hexToRgb(colorInput.value);
     rgb.a = 255;
