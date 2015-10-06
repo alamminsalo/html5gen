@@ -10,11 +10,11 @@ var canvasOptions = {
 }
 
 var userOptions = {
-    blurAmount: 44,
-    noiseOpacity: 35,
+    blurAmount: 0,
+    noiseOpacity: 0,
     shadows: false,
     shadow_color: {r: 0, g: 0, b: 0, a: 255},
-    shadow_radius: 2,
+    shadow_radius: 4,
     shadow_offsetX: 2,
     shadow_offsetY: 2,
     objects_in_layer: 8,
@@ -90,11 +90,6 @@ function generate() {
     }
 
     generateBackground(userOptions.rootColor, noiseCanvas); //Create root canvas
-
-    if (!userOptions.objects_in_layer || userOptions.objects_in_layer < 1){
-        console.log('error:', userOptions.objects_in_layer);
-        return;
-    }
 
     for (var i=0; i < userOptions.layers; i++) {
         if (i > 0) { //Do not blur bottom layer alone
