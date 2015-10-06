@@ -1,36 +1,26 @@
-var blurAmt = null;
-var noiseAmt = null;
-var blurOn = null;
-var noiseOn = null;
-var noiseExtra = null;
-var widthBox = null;
-var heightBox = null;
-var objAmt = null;
-var layerAmt = null;
-var squaresOn = null;
-var trianglesOn = null;
-var circlesOn = null;
-var obSize = null;
+var blurAmt;
+var noiseAmt;
+var blurTop;
+var widthBox;
+var heightBox;
+var objAmt;
+var layerAmt;
+var squaresOn;
+var trianglesOn;
+var circlesOn;
+var obSize;
 var colorRand, colorPerLayer, colorCh;
 var colorInput = null;
 var shadowOn, shadowColor, shadowX, shadowY, shadowRad;
 var depth;
+var colorBalance;
 
-function setupInterface(){
+function setupInterface() {
     blurAmt = document.getElementById("blurAmt");
     blurAmt.value = userOptions.blurAmount;
 
     noiseAmt = document.getElementById("noiseAmt");
     noiseAmt.value = userOptions.noiseOpacity;
-
-    blurOn = document.getElementById("blurOn");
-    blurOn.checked = userOptions.blur;
-
-    noiseOn = document.getElementById("noiseOn");
-    noiseOn.checked = userOptions.noise;
-
-    noiseExtra = document.getElementById("noiseEx");
-    noiseExtra.checked = userOptions.noiseExtra;
 
     widthBox = document.getElementById("widthBox");
     widthBox.value = canvasOptions.width;
@@ -64,7 +54,7 @@ function setupInterface(){
     shadowOn = document.getElementById("shOn");
     shadowOn.checked = userOptions.shadows;
     shadowColor = document.getElementById("shCol");
-    shadowColor.value = rgbToHex(userOptions.shadow_color.r,userOptions.shadow_color.g,userOptions.shadow_color.b);
+    shadowColor.value = rgbToHex(userOptions.shadow_color.r, userOptions.shadow_color.g, userOptions.shadow_color.b);
     shadowRad = document.getElementById("shRad");
     shadowRad.value = userOptions.shadow_radius;
     shadowX = document.getElementById("shX");
@@ -80,11 +70,45 @@ function setupInterface(){
 
     depth = document.getElementById('depth');
     depth.value = userOptions.depth;
+
+    blurTop = document.getElementById('blurTop');
+    blurTop.checked = userOptions.blurTop;
+
+    colorBalance = document.getElementById('balanceColor');
+    colorBalance.checked = userOptions.balanceColors;
+
+    updateAll();
+
+    createDropDownEvents();
+
 }
 
-function updateValues(){
-    userOptions.blur = blurOn.checked;
-    userOptions.noise = noiseOn.checked;
+function createDropDownEvents(){
+    var handles = document.getElementsByClassName('controlbar');
+    for (var i = 0; i < handles.length; i++){
+        handles[i].addEventListener('click', function(){
+            var nodes = this.parentElement.getElementsByClassName('controls');
+            for (var j = 0; j < nodes.length; j++){
+                nodes[j].classList.toggle('hidden');
+            }
+        });
+        var color = getRandomColor();
+        handles[i].style.background = rgbToHex(color.r,color.g,color.b);
+    }
+}
+
+function updateAll() {
+    updateInterfaceValue(blurAmt);
+    updateInterfaceValue(noiseAmt);
+    updateInterfaceValue(obSize);
+    updateInterfaceValue(layerAmt);
+    updateInterfaceValue(objAmt);
+    updateInterfaceValue(depth);
+    updateInterfaceValue(shadowRad);
+    updateInterfaceValue(colorCh);
+}
+
+function updateValues() {
     userOptions.blurAmount = blurAmt.value;
     userOptions.noiseOpacity = noiseAmt.value;
     userOptions.objects_in_layer = objAmt.value;
@@ -94,7 +118,7 @@ function updateValues(){
     userOptions.circles = circlesOn.checked;
     userOptions.size = obSize.value;
     userOptions.randomColor = colorRand.checked;
-    userOptions.noiseExtra = noiseExtra.checked;
+    //userOptions.noiseExtra = noiseExtra.checked;
     userOptions.shadows = shadowOn.checked;
     var shadowRgb = hexToRgb(shadowColor.value);
     shadowRgb.a = 255;
@@ -103,6 +127,8 @@ function updateValues(){
     userOptions.shadow_offsetX = shadowX.value;
     userOptions.shadow_offsetY = shadowY.value;
     userOptions.shadow_radius = shadowRad.value;
+
+    userOptions.blurTop = blurTop.checked;
 
     userOptions.colorChAmt = colorCh.value;
 
@@ -120,10 +146,15 @@ function updateValues(){
     userOptions.depth = depth.value;
 
     userOptions.colorPerLayer = colorPerLayer.checked;
+    userOptions.balanceColors = colorBalance.checked;
     //console.log(userOptions, canvasOptions);
 }
 
-function generatePressed(){
+function updateInterfaceValue(self) {
+    self.parentElement.getElementsByTagName("output")[0].value = self.value;
+}
+
+function generatePressed() {
     updateValues();
     generate();
 }
