@@ -73,8 +73,6 @@ function init() {
 function generate() {
     clear();
 
-    //addSpinner();
-
     if (userOptions.randomColor) {
         userOptions.rootColor = getRandomColor();
     }
@@ -102,7 +100,7 @@ function generate() {
                 userOptions.rootColor,
                 userOptions.colorChAmt,
                 noiseCanvas,
-                userOptions.size + userOptions.depth * i/2
+                userOptions.size * userOptions.depth * i/2
             );
         }
         if (userOptions.squares) {
@@ -126,6 +124,7 @@ function generate() {
             );
         }
     }
+
     //Finishing touches
     if (userOptions.noiseOpacity > 0) {
         drawRectangle(rootCanvas, canvasOptions, null, noiseCanvas);
@@ -219,12 +218,13 @@ function getVariatedColor(color, amount) {
 }
 
 function generateTriangles(parent, amount, color, cvar, noise, size) {
+    console.log('tri',size);
     var color2 = getVariatedColor(color, cvar);
     for (var i = 0; i < amount; i++) {
         if (!userOptions.colorPerLayer){
             color2 = getVariatedColor(color, cvar);
         }
-        drawTriangle(parent, getRandomAlignedTriangle(parent, (Math.random() * 10 + size/2)), color2, noise);
+        drawTriangle(parent, getRandomAlignedTriangle(parent, (Math.random() * 10 + size)), color2, noise);
     }
 }
 
@@ -284,6 +284,7 @@ function generateBackground(color, noise) {
 }
 
 function generateSquares(parent, amount, color, cvar, noise, size) {
+    console.log('sqr',size)
     var color2 = getVariatedColor(color, cvar);
     for (var i = 0; i < amount; i++) {
         if (!userOptions.colorPerLayer){
