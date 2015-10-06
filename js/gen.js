@@ -10,27 +10,26 @@ var canvasOptions = {
 }
 
 var userOptions = {
-    blur: false,
-    blurAmount: 8,
-    noise: false,
-    noiseExtra: true,
-    noiseOpacity: 30,
+    blurAmount: 44,
+    noiseOpacity: 35,
     shadows: false,
     shadow_color: {r: 0, g: 0, b: 0, a: 255},
     shadow_radius: 2,
     shadow_offsetX: 2,
     shadow_offsetY: 2,
-    objects_in_layer: 10,
-    depth: 1.6,
-    layers: 6,
+    objects_in_layer: 8,
+    depth: 2,
+    layers: 8,
     triangles: false,
-    squares: true,
-    circles: false,
-    size: 14,
+    squares: false,
+    circles: true,
+    size: 40,
     rootColor: {r: 0, g: 0, b: 0, a: 255},
     randomColor: true,
     colorPerLayer: false,
-    colorChAmt: 100
+    colorChAmt: 120,
+    blurTop: false,
+    balanceColors: true
 }
 
 function getRandomColor() { //Gives nice midtone-colors
@@ -83,7 +82,7 @@ function generate() {
     shadowColor.value = rgbToHex(userOptions.shadow_color.r,userOptions.shadow_color.g,userOptions.shadow_color.b)
 
     var noiseCanvas = null;
-    if (userOptions.noise) {
+    if (userOptions.noiseOpacity > 0) {
         noiseCanvas = document.createElement("canvas");
         noiseCanvas.width = canvasOptions.width;
         noiseCanvas.height = canvasOptions.height;
@@ -98,7 +97,7 @@ function generate() {
     }
 
     for (var i=0; i < userOptions.layers; i++) {
-        if (userOptions.blur && i > 0) { //Do not blur bottom layer alone
+        if (i > 0) { //Do not blur bottom layer alone
             blur(rootCanvas, userOptions.blurAmount);
         }
         if (userOptions.triangles) {
@@ -108,7 +107,7 @@ function generate() {
                 userOptions.rootColor,
                 userOptions.colorChAmt,
                 noiseCanvas,
-                (Math.random() * 20 + userOptions.size) * i * userOptions.depth
+                userOptions.size + userOptions.depth * i/2
             );
         }
         if (userOptions.squares) {
@@ -118,7 +117,7 @@ function generate() {
                 userOptions.rootColor,
                 userOptions.colorChAmt,
                 noiseCanvas,
-                (Math.random() * 20 + userOptions.size) * i * userOptions.depth
+                userOptions.size * userOptions.depth * i/2
             );
         }
         if (userOptions.circles) {
@@ -128,13 +127,16 @@ function generate() {
                 userOptions.rootColor,
                 userOptions.colorChAmt,
                 noiseCanvas,
-                (Math.random() * 20 + userOptions.size) * i * userOptions.depth
+                userOptions.size * userOptions.depth * i/2
             );
         }
     }
     //Finishing touches
-    if (userOptions.noise && userOptions.noiseExtra) {
+    if (userOptions.noiseOpacity > 0) {
         drawRectangle(rootCanvas, canvasOptions, null, noiseCanvas);
+    }
+    if (userOptions.blurTop){
+        blur(rootCanvas, userOptions.blurAmount);
     }
     rootCanvas.style.height = size + '%';
 }
@@ -192,12 +194,12 @@ function getRandomTriangle(parent) {
 function getRandomAlignedTriangle(parent, size) {
     var point1 = getRandomPoint(parent); //Top
     var point2 = {
-        x: point1.x - size / 2,
-        y: point1.y + size / 2
+        x: point1.x - size/2,
+        y: point1.y + size/2
     };
     var point3 = {
-        x: point1.x + size / 2,
-        y: point1.y + size / 2
+        x: point1.x + size/2,
+        y: point1.y + size/2
     };
     return [
         point1,
@@ -207,9 +209,9 @@ function getRandomAlignedTriangle(parent, size) {
 }
 
 function getVariatedColor(color, amount) {
-    var r = color.r + (Math.random() - .5) * amount;
-    var g = color.g + (Math.random() - .5) * amount;
-    var b = color.b + (Math.random() - .5) * amount;
+    var r = color.r + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
+    var g = color.g + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
+    var b = color.b + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
     r = Math.min(Math.max(0, r), 255);
     g = Math.min(Math.max(0, g), 255);
     b = Math.min(Math.max(0, b), 255);
@@ -227,7 +229,7 @@ function generateTriangles(parent, amount, color, cvar, noise, size) {
         if (!userOptions.colorPerLayer){
             color2 = getVariatedColor(color, cvar);
         }
-        drawTriangle(parent, getRandomAlignedTriangle(parent, size), color2, noise);
+        drawTriangle(parent, getRandomAlignedTriangle(parent, (Math.random() * 10 + size/2)), color2, noise);
     }
 }
 
@@ -268,7 +270,7 @@ function drawTriangle(parent, points, color, noise) {
 }
 
 function blur(parent, radius) {
-    if (parent == null)
+    if (parent == null || radius == 0)
         return;
     StackBlur.canvasRGBA(parent, parent.x, parent.y, parent.width, parent.height, radius);
 }
@@ -292,7 +294,7 @@ function generateSquares(parent, amount, color, cvar, noise, size) {
         if (!userOptions.colorPerLayer){
             color2 = getVariatedColor(color, cvar);
         }
-        drawRectangle(parent, getRandomRectangle(parent, size), color2, noise);
+        drawRectangle(parent, getRandomRectangle(parent, Math.random() * 10 +  size), color2, noise);
     }
 }
 
@@ -348,7 +350,7 @@ function generateCircles(parent, amount, color, cvar, noise, size){
         if (!userOptions.colorPerLayer){
             color2 = getVariatedColor(color, cvar);
         }
-        drawCircle(parent, getRandomPoint(parent), color2, size, noise);
+        drawCircle(parent, getRandomPoint(parent), color2,Math.random() * 10 +  size, noise);
     }
 }
 

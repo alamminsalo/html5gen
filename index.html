@@ -1,68 +1,125 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<!-- Load the Paper.js library -->
-	<!--<script type="text/javascript" src="js/paper-full.min.js"></script>-->
-	<!-- Load external PaperScript and associate it with myCanvas -->
-	<script type="text/javascript" src="js/tools.js"></script>
-	<script type="text/javascript" src="js/spin.min.js"></script>
-	<script type="text/javascript" src="js/interface.js"></script>
-	<script type="text/javascript" src="js/gen.js"></script>
-	<script type="text/javascript" src="js/stackblur.js"></script>
-	<link rel="stylesheet" href="css/style.css">
+    <!-- Load the Paper.js library -->
+    <!--<script type="text/javascript" src="js/paper-full.min.js"></script>-->
+    <!-- Load external PaperScript and associate it with myCanvas -->
+    <script type="text/javascript" src="js/tools.js"></script>
+    <script type="text/javascript" src="js/spin.min.js"></script>
+    <script type="text/javascript" src="js/interface.js"></script>
+    <script type="text/javascript" src="js/gen.js"></script>
+    <script type="text/javascript" src="js/stackblur.js"></script>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-	<table><tr>
-		<td>
+<table>
+    <tr>
+        <td>
 		<span id="panel">
-			<input type="button" value="Generate!" onclick="generatePressed()"/>
+            <div id="genwrap" onclick="generatePressed()">
+                <div id="generate" class="button">Generate!</div>
+            </div>
 
-			<fieldset><legend>Canvas dimensions</legend>
-				<p>Width<input type="text" value="" id="widthBox"/></p>
-				<p>Height<input type="text" value="" id="heightBox"/></p>
-			</fieldset>
+			<div class="container">
+                <h3 class="controlbar button">Filters</h3>
 
-			<fieldset><legend>Filters</legend>
-				<p>Blur<input type="checkbox" id="blurOn"/></p>
-				<p>Blur radius<input type="text" id="blurAmt"/></p>
-				<p>
-					Noise<input type="checkbox" id="noiseOn"/>
-					Top layer<input type="checkbox" id="noiseEx"/>
-				</p>
-				<p>Noise opacity<input type="text" id="noiseAmt"/></p>
-			</fieldset>
+                <div class="controls">
 
-			<fieldset><legend>Objects and layers</legend>
-				<p>Squares<input type="checkbox" id="sqOn"/></p>
-				<p>Triangles<input type="checkbox" id="triOn"/></p>
-				<p>Circles<input type="checkbox" id="ciOn"/></p>
-				<p>Object size<input type="input" id="sizeVal"/></p>
-				<p>Objects per layer<input type="text" id="obAmt"/></p>
-				<p>Layers<input type="text" id="layerAmt"/></p>
-				<p>Depth<input type="text" id="depth"/></p>
-			</fieldset>
+                    <p>Blur<br/><input type="range" id="blurAmt" max="128" oninput="updateInterfaceValue(this)"/>
+                        <output></output>
+                    </p>
+                    <p><input type="checkbox" id="blurTop"/>Blur top layer</p>
+                    <p>Noise<br/><input type="range" id="noiseAmt" max="255" oninput="updateInterfaceValue(this)"/>
+                        <output></output>
+                    </p>
+                </div>
 
-			<fieldset><legend>Color options</legend>
-			<p>Randomize<input type="checkbox" id="randColorOn"/></p>
-			<p>One per layer<input type="checkbox" id="colorPerLayer"/></p>
-			<p>Change amount<input type="text" id="colorCh"/></p>
-			<p>Root color<input type="color" pattern="#[a-f0-9]{6}" id="colorInput" placeholder="#000000"/></p>
-			</fieldset>
+            </div>
 
-			<fieldset><legend>Shadows</legend>
-				<p>Draw shadows<input type="checkbox" id="shOn"/></p>
-				<p>Color<input type="color" id="shCol"/></p>
-				<p>Radius<input type="input" id="shRad"/></p>
-				<p>OffsetX<input type="input" id="shX"/></p>
-				<p>OffsetY<input type="input" id="shY"/></p>
-			</fieldset>
+			<div class="container">
+                <h3 class="controlbar button">Objects and layers</h3>
 
+                <div class="controls">
+                    <p><input type="checkbox" id="sqOn"/>Squares</p>
+
+                    <p><input type="checkbox" id="triOn"/>Triangles</p>
+
+                    <p><input type="checkbox" id="ciOn"/>Circles</p>
+
+                    <p>Object size<br/><input type="range" id="sizeVal" oninput="updateInterfaceValue(this)" min="1"
+                                              max="128"/>
+                        <output></output>
+                    </p>
+
+                    <p>Objects per layer<br/><input type="range" id="obAmt" oninput="updateInterfaceValue(this)"/>
+                        <output></output>
+                    </p>
+
+                    <p>Layers<br/><input type="range" id="layerAmt" oninput="updateInterfaceValue(this)"/>
+                        <output></output>
+                    </p>
+
+                    <p>Depth<br/><input type="range" id="depth" oninput="updateInterfaceValue(this)" min="1" max="10"/>
+                        <output></output>
+                    </p>
+                </div>
+
+            </div>
+
+			<div class="container">
+                <h3 class="controlbar button">Color options</h3>
+
+                <div class="controls hidden">
+                    <p>Root color<input type="color" class="right" id="colorInput"/></p>
+
+                    <p><input type="checkbox" id="randColorOn"/>Randomize</p>
+
+                    <p><input type="checkbox" id="colorPerLayer"/>One per layer</p>
+
+                    <p>Change amount<br/><input type="range" id="colorCh" min="-255" max="255" oninput="updateInterfaceValue(this)"/>
+                        <output></output>
+                    </p>
+
+                    <p><input type="checkbox" id="balanceColor"/>Even colors</p>
+                </div>
+
+            </div>
+
+			<div class="container">
+                <h3 class="controlbar button">Shadows</h3>
+
+                <div class="controls hidden">
+                    <p><input type="checkbox" id="shOn"/>Draw shadows</p>
+
+                    <p>Color<input type="color" id="shCol" class="right"/></p>
+
+                    <p>Radius<br/><input type="range" id="shRad" oninput="updateInterfaceValue(this)"/>
+                        <output></output>
+                    </p>
+
+                    <p>OffsetX<input type="input" id="shX" class="input right"/></p>
+
+                    <p>OffsetY<input type="input" id="shY" class="input right"/></p>
+                </div>
+
+            </div>
+
+			<div class="container">
+
+                <h3 class="controlbar button">Canvas dimensions</h3>
+                <div class="controls">
+                    <p>Width<input type="text" value="" id="widthBox" class="input right"/></p>
+
+                    <p>Height<input type="text" value="" id="heightBox" class="input right"/></p>
+                </div>
+            </div>
 
 		</span>
-		</td>
-		<td>
-			<span id="rootCanvas" onclick="resizeCanvas()"></span>
-		</td>
-	</tr></table>
+        </td>
+        <td>
+            <span id="rootCanvas" onclick="resizeCanvas()"></span>
+        </td>
+    </tr>
+</table>
 </body>
 </html>
