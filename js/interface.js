@@ -81,6 +81,8 @@ function setupInterface() {
 
     createDropDownEvents();
 
+    document.getElementById('generate').addEventListener('click',generatePressed, true);
+    document.getElementById('root').addEventListener('click', resizeCanvas, false);
 }
 
 function createDropDownEvents(){
@@ -154,7 +156,8 @@ function updateInterfaceValue(self) {
     self.parentElement.getElementsByTagName("output")[0].value = self.value;
 }
 
-function generatePressed() {
+function generatePressed(e) {
+    e.stopPropagation();
     updateValues();
     generate();
 }

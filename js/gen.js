@@ -135,18 +135,15 @@ function generate() {
 function clear() {
     if (rootCanvas) {
         rootCanvas.getContext('2d').clearRect(canvasOptions.x, canvasOptions.y, canvasOptions.width, canvasOptions.height);
-        rootCanvas.parentElement.removeChild(rootCanvas);
-        rootCanvas = null;
     }
 }
 
 function getCanvas() {
-    var canvas = document.createElement("canvas");
+    var canvas = document.getElementById("canvas");
     canvas.x = canvasOptions.x;
     canvas.y = canvasOptions.y;
     canvas.width = canvasOptions.width;
     canvas.height = canvasOptions.height;
-    canvas.classList.add('fitcontent')
     return canvas;
 }
 
@@ -269,7 +266,7 @@ function blur(parent, radius) {
 }
 
 function generateBackground(color, noise) {
-    rootCanvas = rootCanvas != null ? rootCanvas : getCanvas();
+    rootCanvas = getCanvas();
     if (rootCanvas) {
         drawRectangle(
             rootCanvas,
