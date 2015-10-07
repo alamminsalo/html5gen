@@ -126,11 +126,12 @@ function generate() {
     }
 
     //Finishing touches
-    if (userOptions.noiseOpacity > 0) {
-        drawRectangle(rootCanvas, canvasOptions, null, noiseCanvas);
-    }
+
     if (userOptions.blurTop){
         blur(rootCanvas, userOptions.blurAmount);
+    }
+    if (userOptions.noiseOpacity > 0) {
+        drawRectangle(rootCanvas, canvasOptions, null, noiseCanvas);
     }
     rootCanvas.style.height = size + '%';
 }
@@ -166,8 +167,8 @@ function flattenImage() {
 
 function getRandomPoint(parent) {
     return {
-        x: Math.floor(Math.random() * parent.width + parent.x),
-        y: Math.floor(Math.random() * parent.height + parent.y)
+        x: Math.floor(Math.random() * parent.width + parent.x - 50),
+        y: Math.floor(Math.random() * parent.height + parent.y - 50)
     };
 }
 
