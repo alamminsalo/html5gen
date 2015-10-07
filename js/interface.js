@@ -109,14 +109,14 @@ function updateAll() {
 }
 
 function updateValues() {
-    userOptions.blurAmount = blurAmt.value;
-    userOptions.noiseOpacity = noiseAmt.value;
-    userOptions.objects_in_layer = objAmt.value;
+    userOptions.blurAmount = Number(blurAmt.value);
+    userOptions.noiseOpacity = Number(noiseAmt.value);
+    userOptions.objects_in_layer = Number(objAmt.value);
     userOptions.layers = layerAmt.value;
     userOptions.squares = squaresOn.checked;
     userOptions.triangles = trianglesOn.checked;
     userOptions.circles = circlesOn.checked;
-    userOptions.size = obSize.value;
+    userOptions.size = Number(obSize.value);
     userOptions.randomColor = colorRand.checked;
     //userOptions.noiseExtra = noiseExtra.checked;
     userOptions.shadows = shadowOn.checked;
@@ -124,9 +124,9 @@ function updateValues() {
     shadowRgb.a = 255;
 
     userOptions.shadow_color = shadowRgb;
-    userOptions.shadow_offsetX = shadowX.value;
-    userOptions.shadow_offsetY = shadowY.value;
-    userOptions.shadow_radius = shadowRad.value;
+    userOptions.shadow_offsetX = Number(shadowX.value);
+    userOptions.shadow_offsetY = Number(shadowY.value);
+    userOptions.shadow_radius = Number(shadowRad.value);
 
     userOptions.blurTop = blurTop.checked;
 
@@ -137,13 +137,13 @@ function updateValues() {
 
     userOptions.rootColor = rgb;
 
-    canvasOptions.width = widthBox.value;
-    canvasOptions.height = heightBox.value;
+    canvasOptions.width = Number(widthBox.value);
+    canvasOptions.height = Number(heightBox.value);
 
-    rootDiv.width = canvasOptions.width;
-    rootDiv.height = canvasOptions.height;
+    rootDiv.width = Number(canvasOptions.width);
+    rootDiv.height = Number(canvasOptions.height);
 
-    userOptions.depth = depth.value;
+    userOptions.depth = Number(depth.value);
 
     userOptions.colorPerLayer = colorPerLayer.checked;
     userOptions.balanceColors = colorBalance.checked;
@@ -157,4 +157,9 @@ function updateInterfaceValue(self) {
 function generatePressed() {
     updateValues();
     generate();
+}
+
+function resizeCanvas(){
+    document.getElementById('panel').classList.toggle('float');
+    rootCanvas.classList.toggle('fitcontent');
 }

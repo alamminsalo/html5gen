@@ -1,5 +1,5 @@
 body{
-    position:relative;
+
     background-image: url("bg.png");
     background-color: #ccc;
     background-repeat: no-repeat;
@@ -11,14 +11,9 @@ p{
     font-size: .8em;
 }
 
-#rootCanvas{
-    display:inline-block;
-}
-
 #panel{
-    display:inline-block;
-    height:100%;
-    min-width:170px;
+    flex: none;
+    margin-right: .5em;
 }
 
 .container{
@@ -49,12 +44,12 @@ p{
     text-align: center;
 }
 
-.input{
-    max-width: 36px;
+.right{
+    float:right;
 }
 
-.right{
-    float: right;
+.input{
+    max-width:60px;
 }
 
 .hidden{
@@ -72,4 +67,20 @@ p{
 }
 .button:hover{
     background-color: rgba(255,255,255,.2);
+}
+
+#wrap{
+    display:flex;
+}
+
+.float{
+    position:fixed;
+}
+
+.fitcontent{
+    width:100%;
+}
+
+.flex{
+    flex:1;
 }

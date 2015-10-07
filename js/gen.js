@@ -19,7 +19,7 @@ var userOptions = {
     shadow_offsetY: 2,
     objects_in_layer: 8,
     depth: 2,
-    layers: 8,
+    layers: 10,
     triangles: false,
     squares: false,
     circles: true,
@@ -51,22 +51,15 @@ function addToColor(color,value){
 }
 
 window.onload = function () {
-    setupInterface();
     init();
 }
 
-var size = 100;
-function resizeCanvas(){
-    size = size < 100 ? 100 : 60;
-    rootCanvas.style.height = size + '%';
-}
+
 
 
 function init() {
-    rootDiv = document.getElementById("rootCanvas");
-    rootDiv.style.width = canvasOptions.width + 'px';
-    rootDiv.style.height = canvasOptions.height + 'px';
-
+    rootDiv = document.getElementById("root");
+    setupInterface();
     generate();
 }
 
@@ -89,10 +82,15 @@ function generate() {
 
     generateBackground(userOptions.rootColor, noiseCanvas); //Create root canvas
 
-    for (var i=0; i < userOptions.layers; i++) {
+    var object_size = userOptions.size;
+
+    for (var i = 0; i < userOptions.layers; i++) {
         if (i > 0) { //Do not blur bottom layer alone
             blur(rootCanvas, userOptions.blurAmount);
         }
+
+        object_size += userOptions.depth * i;
+
         if (userOptions.triangles) {
             generateTriangles(
                 rootCanvas,
@@ -100,7 +98,7 @@ function generate() {
                 userOptions.rootColor,
                 userOptions.colorChAmt,
                 noiseCanvas,
-                userOptions.size * userOptions.depth * i/2
+                object_size
             );
         }
         if (userOptions.squares) {
@@ -110,7 +108,7 @@ function generate() {
                 userOptions.rootColor,
                 userOptions.colorChAmt,
                 noiseCanvas,
-                userOptions.size * userOptions.depth * i/2
+                object_size
             );
         }
         if (userOptions.circles) {
@@ -120,26 +118,24 @@ function generate() {
                 userOptions.rootColor,
                 userOptions.colorChAmt,
                 noiseCanvas,
-                userOptions.size * userOptions.depth * i/2
+                object_size
             );
         }
     }
 
     //Finishing touches
-
     if (userOptions.blurTop){
         blur(rootCanvas, userOptions.blurAmount);
     }
     if (userOptions.noiseOpacity > 0) {
         drawRectangle(rootCanvas, canvasOptions, null, noiseCanvas);
     }
-    rootCanvas.style.height = size + '%';
 }
 
 function clear() {
     if (rootCanvas) {
         rootCanvas.getContext('2d').clearRect(canvasOptions.x, canvasOptions.y, canvasOptions.width, canvasOptions.height);
-        rootDiv.removeChild(rootCanvas);
+        rootCanvas.parentElement.removeChild(rootCanvas);
         rootCanvas = null;
     }
 }
@@ -150,6 +146,7 @@ function getCanvas() {
     canvas.y = canvasOptions.y;
     canvas.width = canvasOptions.width;
     canvas.height = canvasOptions.height;
+    canvas.classList.add('fitcontent')
     return canvas;
 }
 
@@ -225,7 +222,7 @@ function generateTriangles(parent, amount, color, cvar, noise, size) {
         if (!userOptions.colorPerLayer){
             color2 = getVariatedColor(color, cvar);
         }
-        drawTriangle(parent, getRandomAlignedTriangle(parent, (Math.random() * 10 + size)), color2, noise);
+        drawTriangle(parent, getRandomAlignedTriangle(parent, Math.random() * 10 + size), color2, noise);
     }
 }
 
