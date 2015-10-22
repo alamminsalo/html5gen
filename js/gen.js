@@ -10,26 +10,26 @@ var canvasOptions = {
 }
 
 var userOptions = {
-    blurAmount: 0,
-    noiseOpacity: 0,
+    blurAmount: 40,
+    noiseOpacity: 14,
     shadows: false,
     shadow_color: {r: 0, g: 0, b: 0, a: 255},
-    shadow_radius: 4,
+    shadow_radius: 2,
     shadow_offsetX: 2,
     shadow_offsetY: 2,
-    objects_in_layer: 8,
-    depth: 2,
+    objects_in_layer: 10,
+    depth: 3,
     layers: 10,
     triangles: false,
     squares: false,
     circles: true,
-    size: 40,
-    rootColor: {r: 0, g: 0, b: 0, a: 255},
-    randomColor: true,
+    size: 10,
+    rootColor: {r: 2, g: 12, b: 15, a: 255},
+    randomColor: false,
     colorPerLayer: false,
-    colorChAmt: 120,
+    colorChAmt: 175,
     blurTop: false,
-    balanceColors: true
+    balanceColors: false 
 }
 
 function getRandomColor() { //Gives nice midtone-colors
