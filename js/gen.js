@@ -24,6 +24,7 @@ var userOptions = {
     objects_in_layer: 10,
     depth: 3,
     layers: 10,
+	hex: false,
     triangles: false,
     squares: false,
     circles: true,
@@ -141,6 +142,16 @@ function generate() {
                 object_size
             );
         }
+        if (userOptions.hex) {
+            generateHexagons(
+                rootCanvas,
+                userOptions.objects_in_layer,
+                objColor,
+                userOptions.colorChAmt,
+                noiseCanvas,
+                object_size
+            );
+		}
     }
 
     //Finishing touches
@@ -204,16 +215,24 @@ function getRandomTriangle(parent, size) {
     ];
 }
 
+function rad(deg){
+	return deg * Math.PI / 180;
+}
+
 function getRandomAlignedTriangle(parent, size) {
-    var point1 = getRandomPoint(parent); //Top
+	//Triangle height
+	var h = (size / 2) * Math.tan(rad(60));
+
+    var point1 = getRandomPoint(parent);
     var point2 = {
-        x: point1.x - size/2,
-        y: point1.y + size/2
+        x: point1.x + size/2,
+        y: point1.y + h 
     };
     var point3 = {
-        x: point1.x + size/2,
-        y: point1.y + size/2
+        x: point2.x - size,
+        y: point2.y
     };
+	
     return [
         point1,
         point2,
@@ -242,7 +261,7 @@ function generateTriangles(parent, amount, color, cvar, noise, size) {
         if (!userOptions.colorPerLayer){
             color2 = getVariatedColor(color, cvar);
         }
-        drawTriangle(parent, getRandomTriangle(parent, Math.random() * 10 + size), color2, noise);
+        drawShape(parent, getRandomAlignedTriangle(parent, Math.random() * 10 + size), color2, noise);
     }
 }
 
@@ -400,4 +419,105 @@ function drawCircle(parent, point, color, size, noise){
 
     }
 }
+
+function getRandomHexagon(parent, size){
+	var r = size / 2;
+	var b = Math.cos(rad(30)) * r;
+	var a = Math.sin(rad(30)) * r;
+	var p1 = getRandomPoint(parent);
+	var p2 = {
+		x: p1.x + r,
+		y: p1.y
+	};
+	var p3 = {
+		x: p2.x + a,
+		y: p2.y + b
+	};
+	var p4 = {
+		x: p3.x - a,
+		y: p3.y + b
+	};
+	var p5 = {
+		x: p4.x - r,
+		y: p4.y
+	};
+	var p6 = {
+		x: p5.x - a,
+		y: p5.y - b
+	}
+	
+	return [
+		p1,
+		p2,
+		p3,
+		p4,
+		p5,
+		p6
+	];
+}
+
+function getBounds(points){
+	var x1 = Number.MAX_VALUE;
+	var x2 = Number.MIN_VALUE;
+	var y1 = Number.MAX_VALUE;
+	var y2 = Number.MIN_VALUE;
+
+	for (var i in points){
+		x1 = Math.min(points[i].x, x1);
+		y1 = Math.min(points[i].y, y1);
+		x2 = Math.max(points[i].x, x2);
+		y2 = Math.max(points[i].y, y2);
+	}
+
+	return {
+		x: x1,
+		y: y1,
+		x2: x2,
+		y2: y2
+	};
+}
+
+function drawShape(parent, points, color, noise) {
+	if (parent == null)
+        return;
+    var c2 = parent.getContext('2d');
+    if (color) {
+        c2.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
+        c2.beginPath();
+		for (var i in points){
+			if (i == 0)
+				c2.moveTo(points[i].x, points[i].y);
+			else
+				c2.lineTo(points[i].x, points[i].y);
+		}
+        c2.closePath();
+        if (userOptions.shadows){
+            c2.shadowColor = 'rgb(' + userOptions.shadow_color.r + ',' + userOptions.shadow_color.g + ',' + userOptions.shadow_color.b + ')';
+            c2.shadowBlur = userOptions.shadow_radius;
+            c2.shadowOffsetX = userOptions.shadow_offsetX;
+            c2.shadowOffsetY = userOptions.shadow_offsetY;
+        }
+        c2.fill();
+    }
+
+    if (noise) {
+        c2.save();
+        c2.clip();
+        var box = getBounds(points);
+
+        c2.drawImage(noise,box.x,box.y,box.x2-box.x,box.y2-box.y);
+        c2.restore();
+    }
+}
+
+function generateHexagons(parent, amount, color, cvar, noise, size) {
+    var color2 = getVariatedColor(color, cvar);
+    for (var i = 0; i < amount; i++) {
+        if (!userOptions.colorPerLayer){
+            color2 = getVariatedColor(color, cvar);
+        }
+        drawShape(parent, getRandomHexagon(parent, Math.random() * 10 + size), color2, noise);
+    }
+}
+
 

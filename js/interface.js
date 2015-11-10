@@ -6,6 +6,7 @@ var heightBox;
 var objAmt;
 var layerAmt;
 var squaresOn;
+var hexOn;
 var trianglesOn;
 var circlesOn;
 var obSize;
@@ -37,6 +38,9 @@ function setupInterface() {
 
     squaresOn = document.getElementById("sqOn");
     squaresOn.checked = userOptions.squares;
+
+    hexOn = document.getElementById("hexOn");
+    hexOn.checked = userOptions.hex;
 
     trianglesOn = document.getElementById("triOn");
     trianglesOn.checked = userOptions.triangles;
@@ -131,6 +135,8 @@ function updateValues() {
     shadowRgb.a = 255;
 
 	userOptions.colorAlpha = colorAlpha.value;
+
+	userOptions.hex = hexOn.checked;
 
     userOptions.shadow_color = shadowRgb;
     userOptions.shadow_offsetX = Number(shadowX.value);
