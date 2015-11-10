@@ -14,6 +14,7 @@ var colorInput = null;
 var shadowOn, shadowColor, shadowX, shadowY, shadowRad;
 var depth;
 var colorBalance;
+var colorAlpha;
 
 function setupInterface() {
     blurAmt = document.getElementById("blurAmt");
@@ -54,7 +55,7 @@ function setupInterface() {
     shadowOn = document.getElementById("shOn");
     shadowOn.checked = userOptions.shadows;
     shadowColor = document.getElementById("shCol");
-    shadowColor.value = rgbToHex(userOptions.shadow_color.r, userOptions.shadow_color.g, userOptions.shadow_color.b);
+    shadowColor.value = rgbToHex(userOptions.shadow_color);
     shadowRad = document.getElementById("shRad");
     shadowRad.value = userOptions.shadow_radius;
     shadowX = document.getElementById("shX");
@@ -77,6 +78,9 @@ function setupInterface() {
     colorBalance = document.getElementById('balanceColor');
     colorBalance.checked = userOptions.balanceColors;
 
+	colorAlpha = document.getElementById('alpha');
+	colorAlpha.value = userOptions.colorAlpha;
+
     updateAll();
 
     createDropDownEvents();
@@ -95,7 +99,7 @@ function createDropDownEvents(){
             }
         });
         var color = getRandomColor();
-        handles[i].style.background = rgbToHex(color.r,color.g,color.b);
+        handles[i].style.background = rgbToHex(color);
     }
 }
 
@@ -108,6 +112,7 @@ function updateAll() {
     updateInterfaceValue(depth);
     updateInterfaceValue(shadowRad);
     updateInterfaceValue(colorCh);
+    updateInterfaceValue(colorAlpha);
 }
 
 function updateValues() {
@@ -124,6 +129,8 @@ function updateValues() {
     userOptions.shadows = shadowOn.checked;
     var shadowRgb = hexToRgb(shadowColor.value);
     shadowRgb.a = 255;
+
+	userOptions.colorAlpha = colorAlpha.value;
 
     userOptions.shadow_color = shadowRgb;
     userOptions.shadow_offsetX = Number(shadowX.value);
@@ -149,7 +156,6 @@ function updateValues() {
 
     userOptions.colorPerLayer = colorPerLayer.checked;
     userOptions.balanceColors = colorBalance.checked;
-    //console.log(userOptions, canvasOptions);
 }
 
 function updateInterfaceValue(self) {

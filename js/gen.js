@@ -1,3 +1,7 @@
+/*
+ * Functions for various generation tasks and creating objects. 
+ * userOptions and canvasOptions contain interface data which user has access to modify.
+ */
 
 var rootDiv = null;
 var rootCanvas = null;
@@ -5,18 +9,18 @@ var rootCanvas = null;
 var canvasOptions = {
     x: 0,
     y: 0,
-    width: 1920,
-    height: 1080
+    width: screen.width,
+    height: screen.height 
 }
 
 var userOptions = {
-    blurAmount: 40,
-    noiseOpacity: 14,
+    blurAmount: 60,
+    noiseOpacity: 10,
     shadows: false,
     shadow_color: {r: 0, g: 0, b: 0, a: 255},
-    shadow_radius: 2,
-    shadow_offsetX: 2,
-    shadow_offsetY: 2,
+    shadow_radius: 1,
+    shadow_offsetX: 0,
+    shadow_offsetY: 0,
     objects_in_layer: 10,
     depth: 3,
     layers: 10,
@@ -24,20 +28,30 @@ var userOptions = {
     squares: false,
     circles: true,
     size: 10,
-    rootColor: {r: 2, g: 12, b: 15, a: 255},
-    randomColor: false,
+    rootColor: {r: 2, g: 12, b: 15, a: 1},
+    randomColor: true,
     colorPerLayer: false,
-    colorChAmt: 175,
+    colorChAmt: 255,
+	colorAlpha: 150,
     blurTop: false,
     balanceColors: false 
 }
 
-function getRandomColor() { //Gives nice midtone-colors
+function getRandomColor(alpha) { //Gives nice darkish midtone-colors
     return {
-        r: Math.floor(Math.random() * 100 + 120),
-        g: Math.floor(Math.random() * 100 + 120),
-        b: Math.floor(Math.random() * 100 + 120),
-        a: 255
+        r: clamp(0, 255, Math.floor(Math.random() * 100 + 120)),
+        g: clamp(0, 255, Math.floor(Math.random() * 100 + 120)),
+        b: clamp(0, 255, Math.floor(Math.random() * 100 + 120)),
+        a: alpha | userOptions.colorAlpha 
+    };
+}
+
+function getRandomBackgroundColor(){
+    return {
+        r: clamp(0, 255, Math.floor(Math.random() * 50)),
+        g: clamp(0, 255, Math.floor(Math.random() * 50)),
+        b: clamp(0, 255, Math.floor(Math.random() * 50)),
+        a: alpha | userOptions.colorAlpha 
     };
 }
 
@@ -45,9 +59,9 @@ function addToColor(color,value){
     color.r += value;
     color.g += value;
     color.b += value;
-    color.r = Math.min(Math.max(color.r,0),255);
-    color.g = Math.min(Math.max(color.g,0),255);
-    color.b = Math.min(Math.max(color.b,0),255);
+    color.r = clamp(0, 255, color.r);
+    color.g = clamp(0, 255, color.g); 
+    color.b = clamp(0, 255, color.b); 
 }
 
 window.onload = function () {
@@ -55,22 +69,25 @@ window.onload = function () {
 }
 
 
-
-
 function init() {
     rootDiv = document.getElementById("root");
+	document.getElementById('genwrap').style.background = rgbToHex(getRandomColor());
     setupInterface();
     generate();
+}
+
+function clamp(min, max, value){
+	return Math.max(0, Math.min(max, value));	
 }
 
 function generate() {
     clear();
 
     if (userOptions.randomColor) {
-        userOptions.rootColor = getRandomColor();
+        userOptions.rootColor = getRandomBackgroundColor();
     }
-    colorInput.value = rgbToHex(userOptions.rootColor.r,userOptions.rootColor.g,userOptions.rootColor.b);
-    shadowColor.value = rgbToHex(userOptions.shadow_color.r,userOptions.shadow_color.g,userOptions.shadow_color.b)
+    colorInput.value = rgbToHex(userOptions.rootColor);
+    shadowColor.value = rgbToHex(userOptions.shadow_color)
 
     var noiseCanvas = null;
     if (userOptions.noiseOpacity > 0) {
@@ -84,6 +101,9 @@ function generate() {
 
     var object_size = userOptions.size;
 
+	var objColor = userOptions.rootColor;
+	objColor.a = clamp(0, 255, userOptions.colorAlpha) / 255;
+
     for (var i = 0; i < userOptions.layers; i++) {
         if (i > 0) { //Do not blur bottom layer alone
             blur(rootCanvas, userOptions.blurAmount);
@@ -95,7 +115,7 @@ function generate() {
             generateTriangles(
                 rootCanvas,
                 userOptions.objects_in_layer,
-                userOptions.rootColor,
+                objColor,
                 userOptions.colorChAmt,
                 noiseCanvas,
                 object_size
@@ -105,7 +125,7 @@ function generate() {
             generateSquares(
                 rootCanvas,
                 userOptions.objects_in_layer,
-                userOptions.rootColor,
+                objColor,
                 userOptions.colorChAmt,
                 noiseCanvas,
                 object_size
@@ -115,7 +135,7 @@ function generate() {
             generateCircles(
                 rootCanvas,
                 userOptions.objects_in_layer,
-                userOptions.rootColor,
+                objColor,
                 userOptions.colorChAmt,
                 noiseCanvas,
                 object_size
@@ -166,17 +186,21 @@ function getRandomPoint(parent) {
     };
 }
 
-function getRandomTriangle(parent) {
-    var point1 = getRandomPoint(parent);
-    var point2 = getRandomPoint(parent);
-    var point3 = {
-        x: point2.x,
-        y: point1.y
-    };
+function getRandomPointFrom(point, dist){
+	return {
+		x: point.x + (Math.random() * dist * 4 - dist * 2),
+		y: point.y + (Math.random() * dist * 4 - dist * 2)
+	};
+}
+
+function getRandomTriangle(parent, size) {
+    var c1 = getRandomPointFrom(getRandomPoint(parent), size);
+    var c2 = getRandomPointFrom(c1, size);
+    var c3 = getRandomPointFrom(c2, size);
     return [
-        point1,
-        point2,
-        point3
+        c1,
+        c2,
+        c3
     ];
 }
 
@@ -201,9 +225,9 @@ function getVariatedColor(color, amount) {
     var r = color.r + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
     var g = color.g + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
     var b = color.b + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
-    r = Math.min(Math.max(0, r), 255);
-    g = Math.min(Math.max(0, g), 255);
-    b = Math.min(Math.max(0, b), 255);
+    r = clamp(0, 255, r);
+    g = clamp(0, 255, g);
+    b = clamp(0, 255, b);
     return {
         r: Math.floor(r),
         g: Math.floor(g),
@@ -213,13 +237,12 @@ function getVariatedColor(color, amount) {
 }
 
 function generateTriangles(parent, amount, color, cvar, noise, size) {
-    console.log('tri',size);
     var color2 = getVariatedColor(color, cvar);
     for (var i = 0; i < amount; i++) {
         if (!userOptions.colorPerLayer){
             color2 = getVariatedColor(color, cvar);
         }
-        drawTriangle(parent, getRandomAlignedTriangle(parent, Math.random() * 10 + size), color2, noise);
+        drawTriangle(parent, getRandomTriangle(parent, Math.random() * 10 + size), color2, noise);
     }
 }
 
@@ -235,7 +258,7 @@ function drawTriangle(parent, points, color, noise) {
         c2.lineTo(points[2].x, points[2].y);
         c2.closePath();
         if (userOptions.shadows){
-            c2.shadowColor = 'rgba(' + userOptions.shadow_color.r + ',' + userOptions.shadow_color.g + ',' + userOptions.shadow_color.b + ')';
+            c2.shadowColor = 'rgb(' + userOptions.shadow_color.r + ',' + userOptions.shadow_color.g + ',' + userOptions.shadow_color.b + ')';
             c2.shadowBlur = userOptions.shadow_radius;
             c2.shadowOffsetX = userOptions.shadow_offsetX;
             c2.shadowOffsetY = userOptions.shadow_offsetY;
@@ -279,7 +302,6 @@ function generateBackground(color, noise) {
 }
 
 function generateSquares(parent, amount, color, cvar, noise, size) {
-    console.log('sqr',size)
     var color2 = getVariatedColor(color, cvar);
     for (var i = 0; i < amount; i++) {
         if (!userOptions.colorPerLayer){
@@ -321,7 +343,7 @@ function generateNoise(canvas, alpha, x, y, width, height) {
 function drawRectangle(parent, rect, color, noise) {
     var c2 = parent.getContext('2d');
     if (color) {
-        c2.fillStyle = 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
+        c2.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
         if (userOptions.shadows){
             c2.shadowColor = 'rgb(' + userOptions.shadow_color.r + ',' + userOptions.shadow_color.g + ',' + userOptions.shadow_color.b + ')';
             c2.shadowBlur = userOptions.shadow_radius;
@@ -355,7 +377,7 @@ function drawCircle(parent, point, color, size, noise){
         c2.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
         c2.arc(point.x, point.y, radius, 0, 2 * Math.PI, false);
         if (userOptions.shadows){
-            c2.shadowColor = 'rgba(' + userOptions.shadow_color.r + ',' + userOptions.shadow_color.g + ',' + userOptions.shadow_color.b + ')';
+            c2.shadowColor = 'rgb(' + userOptions.shadow_color.r + ',' + userOptions.shadow_color.g + ',' + userOptions.shadow_color.b + ')';
             c2.shadowBlur = userOptions.shadow_radius;
             c2.shadowOffsetX = userOptions.shadow_offsetX;
             c2.shadowOffsetY = userOptions.shadow_offsetY;
@@ -378,3 +400,4 @@ function drawCircle(parent, point, color, size, noise){
 
     }
 }
+

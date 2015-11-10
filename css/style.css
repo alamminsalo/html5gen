@@ -24,7 +24,6 @@ p{
 }
 
 #genwrap {
-    background: #16b7bb;
     margin: .2em 0 .2em 0;
     text-align: center;
     color: #fff;
@@ -67,7 +66,7 @@ p{
     user-select: none;
 }
 .button:hover{
-    background-color: rgba(0,0,0,.2);
+    background-color: rgba(255,255,255,.1);
 }
 
 #wrap{

@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<!--
+	 Title: HTML5 Canvas Background Generator
+	 Author: Antti Lamminsalo
+	 Description: 
+	 A background generating app I made for fun on my spare time. 
+	 Uses stackblur.js for depth-effect between layers.
+	 Source on: https://github.com/alamminsalo/html5gen
+-->
 <html>
 <head>
     <script type="text/javascript" src="js/tools.js"></script>
@@ -34,7 +42,7 @@
         <div class="container">
             <h3 class="controlbar button">Objects and layers</h3>
 
-            <div class="controls">
+            <div class="controls hidden">
                 <p><input type="checkbox" id="sqOn"/>Squares</p>
 
                 <p><input type="checkbox" id="triOn"/>Triangles</p>
@@ -64,7 +72,7 @@
         <div class="container">
             <h3 class="controlbar button">Color options</h3>
 
-            <div class="controls hidden">
+            <div class="controls">
                 <p>Root color<input type="color" class="right" id="colorInput"/></p>
 
                 <p><input type="checkbox" id="randColorOn"/>Randomize</p>
@@ -75,6 +83,11 @@
                                             oninput="updateInterfaceValue(this)"/>
                     <output></output>
                 </p>
+
+                <p>Alpha<br/><input type="range" id="alpha" min="0" max="255"
+                                            oninput="updateInterfaceValue(this)"/>
+                    <output></output>
+				</p>
 
                 <p><input type="checkbox" id="balanceColor"/>Even colors</p>
             </div>
