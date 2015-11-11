@@ -29,7 +29,7 @@ var userOptions = {
     triangles: false,
     squares: false,
     circles: true,
-    size: 10,
+    size: 10 * screen.height / 768, //Some initial scaling to settings which looked nice on 1366x768 display
     rootColor: {r: 2, g: 12, b: 15, a: 1},
     randomColor: true,
     colorPerLayer: false,
