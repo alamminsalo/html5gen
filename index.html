@@ -26,20 +26,17 @@
 
             <div class="controls">
 
-                <p>Blur<br/><input type="range" id="blurAmt" max="128" oninput="updateInterfaceValue(this)"/>
-                    <output></output>
-                </p>
-                <p><input type="checkbox" id="blurTop"/>Blur top layer</p>
+				<p title="Amount of blur between layers">Blur: <output></output><br/><input type="range" id="blurAmt" max="128" oninput="updateInterfaceValue(this)"/></p>
+                <p title="Also blur out top layer"><input type="checkbox" id="blurTop"/>Blur top layer</p>
 
-                <p>Noise<br/><input type="range" id="noiseAmt" max="255" oninput="updateInterfaceValue(this)"/>
-                    <output></output>
+				<p title="Amount of noise">Noise: <output></output><br/><input type="range" id="noiseAmt" max="255" oninput="updateInterfaceValue(this)"/>
                 </p>
             </div>
 
         </div>
 
         <div class="container">
-            <h3 class="controlbar button">Objects and layers</h3>
+            <h3 class="controlbar button">Objects & layers</h3>
 
             <div class="controls">
                 <p><input type="checkbox" id="sqOn"/>Squares</p>
@@ -47,23 +44,19 @@
                 <p><input type="checkbox" id="ciOn"/>Circles</p>
                 <p><input type="checkbox" id="hexOn"/>Hexagons</p>
 
-				<p><input type="checkbox" id="align"/><b>Align in patterns</b></p>
+				<p title="Align objects to patterns"><input type="checkbox" id="align"/><b>Pattern align</b></p>
 
-                <p>Object size<br/><input type="range" id="sizeVal" oninput="updateInterfaceValue(this)" min="1"
+				<p title="Object size. Depth effect and some randomization affects this value">Object size: <output></output><br/><input type="range" id="sizeVal" oninput="updateInterfaceValue(this)" min="1"
                                           max="128"/>
-                    <output></output>
                 </p>
 
-                <p>Objects per layer<br/><input type="range" min="0" id="obAmt" oninput="updateInterfaceValue(this)"/>
-                    <output></output>
+				<p title="Objects in layer">Per layer: <output></output><br/><input type="range" min="0" id="obAmt" oninput="updateInterfaceValue(this)"/>
                 </p>
 
-                <p>Layers<br/><input type="range" id="layerAmt" min="1" oninput="updateInterfaceValue(this)"/>
-                    <output></output>
+				<p>Layers: <output></output><br/><input type="range" id="layerAmt" min="1" oninput="updateInterfaceValue(this)"/>
                 </p>
 
-                <p>Depth<br/><input type="range" id="depth" oninput="updateInterfaceValue(this)" max="10"/>
-                    <output></output>
+				<p title="Effect of depth between layers. Affects object size per layer.">Depth: <output></output><br/><input type="range" id="depth" oninput="updateInterfaceValue(this)" max="10"/>
                 </p>
             </div>
 
@@ -75,21 +68,19 @@
             <div class="controls hidden">
                 <p>Root color<input type="color" class="right" id="colorInput"/></p>
 
-                <p><input type="checkbox" id="randColorOn"/>Randomize</p>
-                <p><input type="checkbox" id="colorPerLayer"/>One per layer</p>
-                <p><input type="checkbox" id="cmut"/>Recursive</p>
+                <p title="Randomise background color each generation time"><input type="checkbox" id="randColorOn"/>Randomize</p>
+                <p title="Use only one color per layer"><input type="checkbox" id="colorPerLayer"/>One per layer</p>
+                <p title="Evolve first color of the layer, rather than using always root color"><input type="checkbox" id="cmut"/>Recursive</p>
 
-                <p>Change amount<br/><input type="range" id="colorCh" min="-255" max="255"
+				<p title="Color variation amount">Change amount: <output></output><br/><input type="range" id="colorCh" min="-255" max="255"
                                             oninput="updateInterfaceValue(this)"/>
-                    <output></output>
                 </p>
 
-                <p>Alpha<br/><input type="range" id="alpha" min="0" max="255"
+				<p title="Opacity level. 255 is fully opaque, while 0 being fully translucent">Alpha: <output></output><br/><input type="range" id="alpha" min="0" max="255"
                                             oninput="updateInterfaceValue(this)"/>
-                    <output></output>
 				</p>
 
-                <p><input type="checkbox" id="balanceColor"/>Even colors</p>
+                <p title="Evens out color variance around root color"><input type="checkbox" id="balanceColor"/>Even colors</p>
             </div>
 
         </div>
@@ -102,8 +93,7 @@
 
                 <p>Color<input type="color" id="shCol" class="right"/></p>
 
-                <p>Radius<br/><input type="range" id="shRad" min="1" oninput="updateInterfaceValue(this)"/>
-                    <output></output>
+				<p>Radius: <output></output><br/><input type="range" id="shRad" min="1" oninput="updateInterfaceValue(this)"/>
                 </p>
 
                 <p>OffsetX<input type="input" id="shX" class="input right"/></p>

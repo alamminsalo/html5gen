@@ -1,9 +1,7 @@
 var blurAmt;
 var noiseAmt;
 var cMutate;
-var blurTop;
-var widthBox;
-var heightBox;
+var blurTop; var widthBox; var heightBox;
 var objAmt;
 var layerAmt;
 var squaresOn;
@@ -18,8 +16,10 @@ var depth;
 var colorBalance;
 var colorAlpha;
 var align;
+var genButton;
 
 function setupInterface() {
+	genButton = document.getElementById('genwrap');
 
     blurAmt = document.getElementById("blurAmt");
     blurAmt.value = userOptions.blurAmount;
@@ -183,7 +183,13 @@ function updateInterfaceValue(self) {
 function generatePressed(e) {
     e.stopPropagation();
     updateValues();
-    generate();
+	genButton.classList.add('disabled');
+	genButton.children[0].innerText = 'Generating...';
+	setTimeout(function(){
+		generate();
+		genButton.classList.remove('disabled');
+		genButton.children[0].innerText = 'Generate!';
+	},100);
 }
 
 function resizeCanvas(){

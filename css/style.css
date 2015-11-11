@@ -1,4 +1,7 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+
 body{
+	font-family:'Montserrat', sans-serif;
     background-color: #444;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -35,11 +38,17 @@ p{
     width:100%;
 }
 
+.disabled{
+	color: #aaa!important;
+	background: #777!important;
+}
+
 .controlbar{
     margin: 0;
     padding: .1em;
     color: #fff;
     text-align: center;
+	font-size: 105%;
 }
 
 .right{
@@ -82,3 +91,4 @@ p{
 .flex{
     flex:1;
 }
+
