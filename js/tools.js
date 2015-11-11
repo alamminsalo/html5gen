@@ -22,3 +22,91 @@ function componentToHex(c) {
 function rgbToHex(color) {
     return "#" + componentToHex(color.r) + componentToHex(color.g) + componentToHex(color.b);
 }
+
+Object.prototype.clone = Array.prototype.clone = function()
+{
+    if (Object.prototype.toString.call(this) === '[object Array]')
+    {
+        var clone = [];
+        for (var i=0; i<this.length; i++)
+            clone[i] = this[i].clone();
+
+        return clone;
+    } 
+    else if (typeof(this)=="object")
+    {
+        var clone = {};
+        for (var prop in this)
+            if (this.hasOwnProperty(prop))
+                clone[prop] = this[prop].clone();
+
+        return clone;
+    }
+    else
+        return this;
+}
+
+function getRand1(){
+	return Math.random() > .5 ? 1 : -1;
+}
+
+function getRandomColor(alpha) { //Gives nice darkish midtone-colors
+    return {
+        r: clamp(0, 255, Math.floor(Math.random() * 100 + 120)),
+        g: clamp(0, 255, Math.floor(Math.random() * 100 + 120)),
+        b: clamp(0, 255, Math.floor(Math.random() * 100 + 120)),
+        a: alpha | userOptions.colorAlpha 
+    };
+}
+
+function getRandomBackgroundColor(){
+    return {
+        r: clamp(0, 255, Math.floor(Math.random() * 50)),
+        g: clamp(0, 255, Math.floor(Math.random() * 50)),
+        b: clamp(0, 255, Math.floor(Math.random() * 50)),
+        a: alpha | userOptions.colorAlpha 
+    };
+}
+
+function addToColor(color,value){
+    color.r += value;
+    color.g += value;
+    color.b += value;
+    color.r = clamp(0, 255, color.r);
+    color.g = clamp(0, 255, color.g); 
+    color.b = clamp(0, 255, color.b); 
+}
+
+function clamp(min, max, value){
+	return Math.max(0, Math.min(max, value));	
+}
+
+function rad(deg){
+	return deg * Math.PI / 180;
+}
+
+function getVariatedColor(color, amount) {
+    var r = color.r + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
+    var g = color.g + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
+    var b = color.b + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
+    r = clamp(0, 255, r);
+    g = clamp(0, 255, g);
+    b = clamp(0, 255, b);
+    return {
+        r: Math.floor(r),
+        g: Math.floor(g),
+        b: Math.floor(b),
+        a: color.a
+    };
+}
+
+
+function cloneColor(a){
+	return {
+		r: a.r,
+		g: a.g,
+		b: a.b,
+		a: a.a
+	};
+}
+

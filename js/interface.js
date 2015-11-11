@@ -1,5 +1,6 @@
 var blurAmt;
 var noiseAmt;
+var cMutate;
 var blurTop;
 var widthBox;
 var heightBox;
@@ -16,8 +17,10 @@ var shadowOn, shadowColor, shadowX, shadowY, shadowRad;
 var depth;
 var colorBalance;
 var colorAlpha;
+var align;
 
 function setupInterface() {
+
     blurAmt = document.getElementById("blurAmt");
     blurAmt.value = userOptions.blurAmount;
 
@@ -33,6 +36,9 @@ function setupInterface() {
     objAmt = document.getElementById("obAmt");
     objAmt.value = userOptions.objects_in_layer;
 
+	align = document.getElementById("align");
+	align.checked = userOptions.align;
+
     layerAmt = document.getElementById("layerAmt");
     layerAmt.value = userOptions.layers;
 
@@ -44,6 +50,9 @@ function setupInterface() {
 
     trianglesOn = document.getElementById("triOn");
     trianglesOn.checked = userOptions.triangles;
+
+	cMutate = document.getElementById("cmut");
+	cMutate.checked = userOptions.colorMutate;
 
     circlesOn = document.getElementById("ciOn");
     circlesOn.checked = userOptions.circles;
@@ -152,6 +161,8 @@ function updateValues() {
 
     userOptions.rootColor = rgb;
 
+	userOptions.align = align.checked;
+
     canvasOptions.width = Number(widthBox.value);
     canvasOptions.height = Number(heightBox.value);
 
@@ -162,6 +173,7 @@ function updateValues() {
 
     userOptions.colorPerLayer = colorPerLayer.checked;
     userOptions.balanceColors = colorBalance.checked;
+	userOptions.colorMutate = cMutate.checked;
 }
 
 function updateInterfaceValue(self) {
@@ -178,3 +190,39 @@ function resizeCanvas(){
     document.getElementById('panel').classList.toggle('float');
     rootCanvas.classList.toggle('fitcontent');
 }
+
+var canvasOptions = {
+    x: 0,
+    y: 0,
+    width: screen.width,
+    height: screen.height 
+}
+
+var userOptions = {
+	align: true,
+    blurAmount: 60,
+    noiseOpacity: 10,
+    shadows: false,
+    shadow_color: {r: 0, g: 0, b: 0, a: 255},
+    shadow_radius: 1,
+    shadow_offsetX: 0,
+    shadow_offsetY: 0,
+    objects_in_layer: 10,
+    depth: 3,
+    layers: 10,
+	hex: false,
+    triangles: false,
+    squares: false,
+    circles: true,
+    size: 10,
+    rootColor: {r: 2, g: 12, b: 15, a: 1},
+    randomColor: true,
+    colorPerLayer: false,
+    colorChAmt: 100,
+	colorAlpha: 150,
+    blurTop: false,
+    balanceColors: false,
+	colorMutate: true
+}
+
+

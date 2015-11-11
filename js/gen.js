@@ -6,79 +6,15 @@
 var rootDiv = null;
 var rootCanvas = null;
 
-var canvasOptions = {
-    x: 0,
-    y: 0,
-    width: screen.width,
-    height: screen.height 
-}
-
-var userOptions = {
-    blurAmount: 60,
-    noiseOpacity: 10,
-    shadows: false,
-    shadow_color: {r: 0, g: 0, b: 0, a: 255},
-    shadow_radius: 1,
-    shadow_offsetX: 0,
-    shadow_offsetY: 0,
-    objects_in_layer: 10,
-    depth: 3,
-    layers: 10,
-	hex: false,
-    triangles: false,
-    squares: false,
-    circles: true,
-    size: 10,
-    rootColor: {r: 2, g: 12, b: 15, a: 1},
-    randomColor: true,
-    colorPerLayer: false,
-    colorChAmt: 255,
-	colorAlpha: 150,
-    blurTop: false,
-    balanceColors: false 
-}
-
-function getRandomColor(alpha) { //Gives nice darkish midtone-colors
-    return {
-        r: clamp(0, 255, Math.floor(Math.random() * 100 + 120)),
-        g: clamp(0, 255, Math.floor(Math.random() * 100 + 120)),
-        b: clamp(0, 255, Math.floor(Math.random() * 100 + 120)),
-        a: alpha | userOptions.colorAlpha 
-    };
-}
-
-function getRandomBackgroundColor(){
-    return {
-        r: clamp(0, 255, Math.floor(Math.random() * 50)),
-        g: clamp(0, 255, Math.floor(Math.random() * 50)),
-        b: clamp(0, 255, Math.floor(Math.random() * 50)),
-        a: alpha | userOptions.colorAlpha 
-    };
-}
-
-function addToColor(color,value){
-    color.r += value;
-    color.g += value;
-    color.b += value;
-    color.r = clamp(0, 255, color.r);
-    color.g = clamp(0, 255, color.g); 
-    color.b = clamp(0, 255, color.b); 
-}
-
 window.onload = function () {
     init();
 }
-
 
 function init() {
     rootDiv = document.getElementById("root");
 	document.getElementById('genwrap').style.background = rgbToHex(getRandomColor());
     setupInterface();
     generate();
-}
-
-function clamp(min, max, value){
-	return Math.max(0, Math.min(max, value));	
 }
 
 function generate() {
@@ -178,18 +114,6 @@ function getCanvas() {
     return canvas;
 }
 
-function flattenImage() {
-    var rootctx = rootCanvas.getContext('2d');
-    for (var i in canvasStack) {
-        if (canvasStack[i] != rootCanvas) {
-            rootctx.drawImage(canvasStack[i], 0, 0)
-        }
-    }
-    while (canvasStack.length > 1) {
-        canvasStack.pop();
-    }
-}
-
 function getRandomPoint(parent) {
     return {
         x: Math.floor(Math.random() * parent.width + parent.x - 50),
@@ -199,8 +123,8 @@ function getRandomPoint(parent) {
 
 function getRandomPointFrom(point, dist){
 	return {
-		x: point.x + (Math.random() * dist * 4 - dist * 2),
-		y: point.y + (Math.random() * dist * 4 - dist * 2)
+		x: point.x + (Math.random() * dist * getRand1()),
+		y: point.y + (Math.random() * dist * getRand1())
 	};
 }
 
@@ -215,18 +139,13 @@ function getRandomTriangle(parent, size) {
     ];
 }
 
-function rad(deg){
-	return deg * Math.PI / 180;
-}
-
-function getRandomAlignedTriangle(parent, size) {
+function getTriangle(point1, size) {
 	//Triangle height
 	var h = (size / 2) * Math.tan(rad(60));
 
-    var point1 = getRandomPoint(parent);
     var point2 = {
         x: point1.x + size/2,
-        y: point1.y + h 
+        y: point1.y + h
     };
     var point3 = {
         x: point2.x - size,
@@ -240,29 +159,18 @@ function getRandomAlignedTriangle(parent, size) {
     ];
 }
 
-function getVariatedColor(color, amount) {
-    var r = color.r + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
-    var g = color.g + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
-    var b = color.b + (Math.random() - (userOptions.balanceColors ? .5 : 0)) * amount;
-    r = clamp(0, 255, r);
-    g = clamp(0, 255, g);
-    b = clamp(0, 255, b);
-    return {
-        r: Math.floor(r),
-        g: Math.floor(g),
-        b: Math.floor(b),
-        a: color.a
-    };
-}
-
 function generateTriangles(parent, amount, color, cvar, noise, size) {
-    var color2 = getVariatedColor(color, cvar);
-    for (var i = 0; i < amount; i++) {
-        if (!userOptions.colorPerLayer){
-            color2 = getVariatedColor(color, cvar);
-        }
-        drawShape(parent, getRandomAlignedTriangle(parent, Math.random() * 10 + size), color2, noise);
-    }
+	if (userOptions.align){
+		generateTriangle(parent,amount,color,cvar,noise,size,getRandomPoint(parent));
+	} else {
+		var color2 = getVariatedColor(color, cvar);
+		for (var i = 0; i < amount; i++) {
+			if (!userOptions.colorPerLayer){
+				color2 = getVariatedColor(userOptions.colorMutate ? color2 : color, cvar);
+			}
+			drawShape(parent, getTriangle(getRandomPoint(parent), Math.random() * 10 + size), color2, noise);
+		}
+	}
 }
 
 function drawTriangle(parent, points, color, noise) {
@@ -321,23 +229,29 @@ function generateBackground(color, noise) {
 }
 
 function generateSquares(parent, amount, color, cvar, noise, size) {
-    var color2 = getVariatedColor(color, cvar);
-    for (var i = 0; i < amount; i++) {
-        if (!userOptions.colorPerLayer){
-            color2 = getVariatedColor(color, cvar);
-        }
-        drawRectangle(parent, getRandomRectangle(parent, Math.random() * 10 +  size), color2, noise);
-    }
+	if (userOptions.align){
+		generateSquare(parent, amount, color, cvar, noise, size, getRandomPoint(parent));
+	} else {
+		var color2 = getVariatedColor(color, cvar);
+		for (var i = 0; i < amount; i++) {
+			if (!userOptions.colorPerLayer){
+				color2 = getVariatedColor(userOptions.colorMutate ? color2 : color, cvar);
+			}
+			drawShape(parent, getRectangle(getRandomPoint(parent), Math.random() * 10 +  size), color2, noise);
+		}
+	}
 }
 
-function getRandomRectangle(parent, size) {
-    var point1 = getRandomPoint(parent);
-    return {
-        x: point1.x,
-        y: point1.y,
-        width: size,
-        height: size
-    }
+function getRectangle(point, size) {
+	var p2 = {x: point.x + size, y: point.y};
+	var p3 = {x: p2.x, y: p2.y + size};
+	var p4 = {x: p3.x - size, y: p3.y};
+    return [
+		point,
+		p2,
+		p3,
+		p4
+	]
 }
 
 function generateNoise(canvas, alpha, x, y, width, height) {
@@ -347,8 +261,7 @@ function generateNoise(canvas, alpha, x, y, width, height) {
     height = height || canvas.height;
     alpha = alpha || 255;
     var g = canvas.getContext("2d"),
-        imageData = g.getImageData(x, y, width, height),
-        random = Math.random,
+        imageData = g.getImageData(x, y, width, height), random = Math.random,
         pixels = imageData.data,
         n = pixels.length,
         i = 0;
@@ -377,13 +290,17 @@ function drawRectangle(parent, rect, color, noise) {
 }
 
 function generateCircles(parent, amount, color, cvar, noise, size){
-    var color2 = getVariatedColor(color, cvar);
-    for (var i = 0; i < amount; i++) {
-        if (!userOptions.colorPerLayer){
-            color2 = getVariatedColor(color, cvar);
-        }
-        drawCircle(parent, getRandomPoint(parent), color2,Math.random() * 10 +  size, noise);
-    }
+	if (userOptions.align){
+		generateCircle(parent,amount,color,cvar,noise,size,getRandomPoint(parent));
+	} else {
+		var color2 = getVariatedColor(color, cvar);
+		for (var i = 0; i < amount; i++) {
+			if (!userOptions.colorPerLayer){
+				color2 = getVariatedColor(userOptions.colorMutate ? color2 : color, cvar);
+			}
+			drawCircle(parent, getRandomPoint(parent), color2,Math.random() * 10 +  size, noise);
+		}
+	}
 }
 
 function drawCircle(parent, point, color, size, noise){
@@ -420,11 +337,10 @@ function drawCircle(parent, point, color, size, noise){
     }
 }
 
-function getRandomHexagon(parent, size){
+function getHexagon(p1, size){
 	var r = size / 2;
 	var b = Math.cos(rad(30)) * r;
 	var a = Math.sin(rad(30)) * r;
-	var p1 = getRandomPoint(parent);
 	var p2 = {
 		x: p1.x + r,
 		y: p1.y
@@ -504,20 +420,79 @@ function drawShape(parent, points, color, noise) {
         c2.save();
         c2.clip();
         var box = getBounds(points);
-
         c2.drawImage(noise,box.x,box.y,box.x2-box.x,box.y2-box.y);
         c2.restore();
     }
 }
 
+function generateCircle(parent, amount, color, cvar, noise, size, point){
+	if (!userOptions.colorPerLayer){
+		var color2 = getVariatedColor(color, cvar);
+	}
+	drawCircle(parent, point, color2, size, noise);
+	if (--amount > 0){
+		var d = size * 1.1;
+		var randX = Math.random() > .5 ? true : false;
+		var point2 = {
+			x: randX ? point.x + d * getRand1() : point.x, 
+			y: !randX ? point.y + d * getRand1() : point.y
+		};
+		generateCircle(parent, amount, userOptions.colorMutate ? color2 : color, cvar, noise, size, point2);
+	}
+}
+
+function generateSquare(parent, amount, color, cvar, noise, size, point){
+	if (!userOptions.colorPerLayer){
+		var color2 = getVariatedColor(color, cvar);
+	}
+	drawShape(parent, getRectangle(point, size), color2, noise);
+	if (--amount > 0){
+		var d = size * 1.1;
+		var randX = Math.random() > .5 ? true : false;
+		var point2 = {
+			x: randX ? point.x + d * getRand1() : point.x, 
+			y: !randX ? point.y + d * getRand1() : point.y
+		};
+		generateSquare(parent, amount, userOptions.colorMutate ? color2 : color, cvar, noise, size, point2);
+	}
+}
+
+function generateHexagon(parent, amount, color, cvar, noise, size, point) {
+	if (!userOptions.colorPerLayer)
+		var color2 = getVariatedColor(color, cvar);
+	drawShape(parent, getHexagon(point, size), color2, noise);
+	if (--amount > 0){
+		var point2 = {x: point.x + getRand1() * size * .86, y: point.y - getRand1() * size / 2};
+		generateHexagon(parent, amount, userOptions.colorMutate ? color2 : color, cvar, noise, size, point2);
+	}
+}
+
 function generateHexagons(parent, amount, color, cvar, noise, size) {
-    var color2 = getVariatedColor(color, cvar);
-    for (var i = 0; i < amount; i++) {
-        if (!userOptions.colorPerLayer){
-            color2 = getVariatedColor(color, cvar);
-        }
-        drawShape(parent, getRandomHexagon(parent, Math.random() * 10 + size), color2, noise);
-    }
+	if (userOptions.align){
+		generateHexagon(parent, amount, color, cvar, noise, size, getRandomPoint(parent));
+	} else {
+		var color2 = getVariatedColor(color, cvar);
+		for (var i = 0; i < amount; i++) {
+			if (!userOptions.colorPerLayer){
+				color2 = getVariatedColor(userOptions.colorMutate ? color2 : color, cvar);
+			}
+			drawShape(parent, getHexagon(getRandomPoint(parent), Math.random() * 10 + size), color2, noise);
+		}
+	}
 }
 
 
+function generateTriangle(parent, amount, color, cvar, noise, size, point){
+	if (!userOptions.colorPerLayer)
+		var color2 = getVariatedColor(color, cvar);
+	drawShape(parent, getTriangle(point, size), color2, noise);
+	if (--amount > 0){
+		var d = size * 1.1;
+		var randX = Math.random() > .5 ? true : false;
+		var point2 = {
+			x: randX ? point.x + d * getRand1() : point.x, 
+			y: !randX ? point.y + d * getRand1() : point.y
+		};
+		generateTriangle(parent, amount, userOptions.colorMutate ? color2 : color, cvar, noise, size, point2);
+	}
+}

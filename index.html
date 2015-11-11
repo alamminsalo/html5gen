@@ -5,8 +5,7 @@
 	 Description: 
 	 A background generating app I made for fun on my spare time. 
 	 Uses stackblur.js for depth-effect between layers.
-	 Source on: https://github.com/alamminsalo/html5gen
--->
+	 Source on: https://github.com/alamminsalo/html5gen -->
 <html>
 <head>
     <script type="text/javascript" src="js/tools.js"></script>
@@ -48,6 +47,8 @@
                 <p><input type="checkbox" id="ciOn"/>Circles</p>
                 <p><input type="checkbox" id="hexOn"/>Hexagons</p>
 
+				<p><input type="checkbox" id="align"/><b>Align in patterns</b></p>
+
                 <p>Object size<br/><input type="range" id="sizeVal" oninput="updateInterfaceValue(this)" min="1"
                                           max="128"/>
                     <output></output>
@@ -57,7 +58,7 @@
                     <output></output>
                 </p>
 
-                <p>Layers<br/><input type="range" id="layerAmt" oninput="updateInterfaceValue(this)"/>
+                <p>Layers<br/><input type="range" id="layerAmt" min="1" oninput="updateInterfaceValue(this)"/>
                     <output></output>
                 </p>
 
@@ -75,8 +76,8 @@
                 <p>Root color<input type="color" class="right" id="colorInput"/></p>
 
                 <p><input type="checkbox" id="randColorOn"/>Randomize</p>
-
                 <p><input type="checkbox" id="colorPerLayer"/>One per layer</p>
+                <p><input type="checkbox" id="cmut"/>Recursive</p>
 
                 <p>Change amount<br/><input type="range" id="colorCh" min="-255" max="255"
                                             oninput="updateInterfaceValue(this)"/>
