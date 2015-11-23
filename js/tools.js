@@ -77,6 +77,17 @@ function addToColor(color,value){
     color.b = clamp(0, 255, color.b); 
 }
 
+function addToColorRand(color,value){
+	var r = Math.random() * 3;
+	if (r < 1){
+		color.r = clamp(0,255,color.r + value)
+	} else if (r < 2) {
+		color.g = clamp(0,255,color.g + value)
+	} else {
+		color.b = clamp(0,255,color.b + value)
+	}
+}
+
 function clamp(min, max, value){
 	return Math.max(0, Math.min(max, value));	
 }

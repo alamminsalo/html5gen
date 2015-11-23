@@ -13,40 +13,12 @@ var canvasOptions = {
     height: screen.height 
 }
 
-var userOptions = {
-	align: true,
-    blurAmount: 60,
-    noiseOpacity: 10,
-    shadows: false,
-    shadow_color: {r: 0, g: 0, b: 0, a: 255},
-    shadow_radius: 1,
-    shadow_offsetX: 0,
-    shadow_offsetY: 0,
-    objects_in_layer: 10,
-    depth: 3,
-    layers: 10,
-	hex: false,
-    triangles: false,
-    squares: false,
-    circles: true,
-    size: 10 * screen.height / 768, //Some initial scaling to settings which looked nice on 1366x768 display
-    rootColor: {r: 2, g: 12, b: 15, a: 1},
-    randomColor: true,
-    colorPerLayer: false,
-    colorChAmt: 100,
-	colorAlpha: 150,
-    blurTop: false,
-    balanceColors: false,
-	colorMutate: true
-}
-
-
-
 window.onload = function () {
     init();
 }
 
 function init() {
+	userOptions = getSmoothCirclesPreset();
     rootDiv = document.getElementById("root");
 	document.getElementById('genwrap').style.background = rgbToHex(getRandomColor());
     setupInterface();

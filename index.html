@@ -12,6 +12,7 @@
     <script type="text/javascript" src="js/interface.js"></script>
     <script type="text/javascript" src="js/gen.js"></script>
     <script type="text/javascript" src="js/stackblur.js"></script>
+    <script type="text/javascript" src="js/presets.js"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -22,6 +23,23 @@
         </div>
 
         <div class="container">
+            <h3 class="controlbar button">Presets</h3>
+
+            <div class="controls">
+                <p>
+					<select id="preset" onchange="onPresetSelected()">
+						<option value="circles">Smooth Circles</option><!--Default settings-->
+						<option value="flatc">Flat Circles</option>
+						<option value="flats">Minimalistic Squares</option>
+						<option value="ambient">Deep Ambient</option>
+						<option value="hex">Colorful Hex</option>
+					</select>
+				</p>
+            </div>
+
+        </div>
+
+        <div class="container">
             <h3 class="controlbar button">Filters</h3>
 
             <div class="controls">
@@ -29,7 +47,7 @@
 				<p title="Amount of blur between layers">Blur: <output></output><br/><input type="range" id="blurAmt" max="128" oninput="updateInterfaceValue(this)"/></p>
                 <p title="Also blur out top layer"><input type="checkbox" id="blurTop"/>Blur top layer</p>
 
-				<p title="Amount of noise">Noise: <output></output><br/><input type="range" id="noiseAmt" max="255" oninput="updateInterfaceValue(this)"/>
+				<p title="Amount of noise">Noise: <output></output><br/><input type="range" id="noiseAmt" max="100" oninput="updateInterfaceValue(this)"/>
                 </p>
             </div>
 
@@ -46,8 +64,7 @@
 
 				<p title="Align objects to patterns"><input type="checkbox" id="align"/><b>Pattern align</b></p>
 
-				<p title="Object size. Depth effect and some randomization affects this value">Object size: <output></output><br/><input type="range" id="sizeVal" oninput="updateInterfaceValue(this)" min="1"
-                                          max="128"/>
+				<p title="Object size. Depth effect and some randomization affects this value">Object size: <output></output><br/><input type="range" id="sizeVal" oninput="updateInterfaceValue(this)" min="1" max="1000"/>
                 </p>
 
 				<p title="Objects in layer">Per layer: <output></output><br/><input type="range" min="0" id="obAmt" oninput="updateInterfaceValue(this)"/>
@@ -69,7 +86,7 @@
                 <p>Root color<input type="color" class="right" id="colorInput"/></p>
 
                 <p title="Randomise background color each generation time"><input type="checkbox" id="randColorOn"/>Randomize</p>
-                <p title="Use only one color per layer"><input type="checkbox" id="colorPerLayer"/>One per layer</p>
+                <p title="Use only one color per layer. Note: Doesn't work with 'Pattern align' selected"><input type="checkbox" id="colorPerLayer"/>One per layer</p>
                 <p title="Evolve first color of the layer, rather than using always root color"><input type="checkbox" id="cmut"/>Recursive</p>
 
 				<p title="Color variation amount">Change amount: <output></output><br/><input type="range" id="colorCh" min="-255" max="255"

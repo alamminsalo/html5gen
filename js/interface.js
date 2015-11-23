@@ -1,3 +1,7 @@
+//UserOptions
+var userOptions;
+
+//Interface doms
 var blurAmt;
 var noiseAmt;
 var cMutate;
@@ -18,83 +22,66 @@ var colorAlpha;
 var align;
 var genButton;
 
-function setupInterface() {
-	genButton = document.getElementById('genwrap');
-
-    blurAmt = document.getElementById("blurAmt");
-    blurAmt.value = userOptions.blurAmount;
-
-    noiseAmt = document.getElementById("noiseAmt");
-    noiseAmt.value = userOptions.noiseOpacity;
-
-    widthBox = document.getElementById("widthBox");
+function updateInterface(){
     widthBox.value = canvasOptions.width;
-
-    heightBox = document.getElementById("heightBox");
     heightBox.value = canvasOptions.height;
-
-    objAmt = document.getElementById("obAmt");
+    blurAmt.value = userOptions.blurAmount;
+    noiseAmt.value = userOptions.noiseOpacity;
     objAmt.value = userOptions.objects_in_layer;
-
-	align = document.getElementById("align");
 	align.checked = userOptions.align;
-
-    layerAmt = document.getElementById("layerAmt");
     layerAmt.value = userOptions.layers;
-
-    squaresOn = document.getElementById("sqOn");
     squaresOn.checked = userOptions.squares;
-
-    hexOn = document.getElementById("hexOn");
     hexOn.checked = userOptions.hex;
-
-    trianglesOn = document.getElementById("triOn");
     trianglesOn.checked = userOptions.triangles;
-
-	cMutate = document.getElementById("cmut");
 	cMutate.checked = userOptions.colorMutate;
-
-    circlesOn = document.getElementById("ciOn");
     circlesOn.checked = userOptions.circles;
-
-    obSize = document.getElementById("sizeVal");
     obSize.value = userOptions.size;
-
-    colorInput = document.getElementById("colorInput");
-
-    colorRand = document.getElementById("randColorOn");
     colorRand.checked = userOptions.randomColor;
-
-    shadowOn = document.getElementById("shOn");
     shadowOn.checked = userOptions.shadows;
-    shadowColor = document.getElementById("shCol");
     shadowColor.value = rgbToHex(userOptions.shadow_color);
-    shadowRad = document.getElementById("shRad");
     shadowRad.value = userOptions.shadow_radius;
-    shadowX = document.getElementById("shX");
+    colorPerLayer.checked = userOptions.colorPerLayer;
+    colorCh.value = userOptions.colorChAmt;
+    depth.value = userOptions.depth;
+    blurTop.checked = userOptions.blurTop;
+    colorBalance.checked = userOptions.balanceColors;
+	colorAlpha.value = userOptions.colorAlpha;
     shadowX.value = userOptions.shadow_offsetX;
-    shadowY = document.getElementById("shY");
     shadowY.value = userOptions.shadow_offsetY;
 
+	updateDoms();
+}
+
+function setupInterface() {
+	genButton = document.getElementById('genwrap');
+    blurAmt = document.getElementById("blurAmt");
+    noiseAmt = document.getElementById("noiseAmt");
+    widthBox = document.getElementById("widthBox");
+    heightBox = document.getElementById("heightBox");
+    objAmt = document.getElementById("obAmt");
+	align = document.getElementById("align");
+    layerAmt = document.getElementById("layerAmt");
+	squaresOn = document.getElementById("sqOn");
+    hexOn = document.getElementById("hexOn");
+    trianglesOn = document.getElementById("triOn");
+	cMutate = document.getElementById("cmut");
+    circlesOn = document.getElementById("ciOn");
+    obSize = document.getElementById("sizeVal");
+    colorInput = document.getElementById("colorInput");
+    colorRand = document.getElementById("randColorOn");
+    shadowOn = document.getElementById("shOn");
+    shadowColor = document.getElementById("shCol");
+    shadowRad = document.getElementById("shRad");
+    shadowX = document.getElementById("shX");
+    shadowY = document.getElementById("shY");
     colorPerLayer = document.getElementById('colorPerLayer');
-    colorPerLayer.checked = userOptions.colorPerLayer;
-
     colorCh = document.getElementById('colorCh');
-    colorCh.value = userOptions.colorChAmt;
-
     depth = document.getElementById('depth');
-    depth.value = userOptions.depth;
-
     blurTop = document.getElementById('blurTop');
-    blurTop.checked = userOptions.blurTop;
-
     colorBalance = document.getElementById('balanceColor');
-    colorBalance.checked = userOptions.balanceColors;
-
 	colorAlpha = document.getElementById('alpha');
-	colorAlpha.value = userOptions.colorAlpha;
 
-    updateAll();
+	updateInterface()
 
     createDropDownEvents();
 
@@ -116,10 +103,9 @@ function createDropDownEvents(){
     }
 }
 
-function updateAll() {
+function updateDoms() {
     updateInterfaceValue(blurAmt);
-    updateInterfaceValue(noiseAmt);
-    updateInterfaceValue(obSize);
+    updateInterfaceValue(noiseAmt); updateInterfaceValue(obSize);
     updateInterfaceValue(layerAmt);
     updateInterfaceValue(objAmt);
     updateInterfaceValue(depth);
@@ -181,7 +167,8 @@ function updateInterfaceValue(self) {
 }
 
 function generatePressed(e) {
-    e.stopPropagation();
+	if (e)
+		e.stopPropagation();
     updateValues();
 	genButton.classList.add('disabled');
 	genButton.children[0].innerText = 'Generating...';
@@ -197,3 +184,30 @@ function resizeCanvas(){
     rootCanvas.classList.toggle('fitcontent');
 }
 
+function onPresetSelected(){
+	var select = document.getElementById("preset");
+	console.log("Selecting preset: ",select.value);
+	switch(select.value){
+		case "flatc":
+			userOptions = getFlatCirclesPreset();
+			break;
+
+		case "flats":
+			userOptions = getFlatSquaresPreset();
+			break;
+
+		case "circles":
+			userOptions = getSmoothCirclesPreset();
+			break;
+
+		case "ambient":
+			userOptions = getAmbientPreset();
+			break;
+
+		case "hex":
+			userOptions = getHexPreset();
+			break;
+	}
+	updateInterface();
+	generatePressed();
+}
