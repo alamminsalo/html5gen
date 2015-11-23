@@ -13,7 +13,7 @@ var hexOn;
 var trianglesOn;
 var circlesOn;
 var obSize;
-var colorRand, colorPerLayer, colorCh;
+var colorRand, colorPerLayer, colorCh, bgBr;
 var colorInput = null;
 var shadowOn, shadowColor, shadowX, shadowY, shadowRad;
 var depth;
@@ -48,6 +48,7 @@ function updateInterface(){
 	colorAlpha.value = userOptions.colorAlpha;
     shadowX.value = userOptions.shadow_offsetX;
     shadowY.value = userOptions.shadow_offsetY;
+	bgBr.value = userOptions.brightness;
 
 	updateDoms();
 }
@@ -63,6 +64,7 @@ function setupInterface() {
     layerAmt = document.getElementById("layerAmt");
 	squaresOn = document.getElementById("sqOn");
     hexOn = document.getElementById("hexOn");
+	bgBr = document.getElementById("bgBr");
     trianglesOn = document.getElementById("triOn");
 	cMutate = document.getElementById("cmut");
     circlesOn = document.getElementById("ciOn");
@@ -112,6 +114,7 @@ function updateDoms() {
     updateInterfaceValue(shadowRad);
     updateInterfaceValue(colorCh);
     updateInterfaceValue(colorAlpha);
+    updateInterfaceValue(bgBr);
 }
 
 function updateValues() {
@@ -124,7 +127,7 @@ function updateValues() {
     userOptions.circles = circlesOn.checked;
     userOptions.size = Number(obSize.value);
     userOptions.randomColor = colorRand.checked;
-    //userOptions.noiseExtra = noiseExtra.checked;
+    userOptions.brightness = bgBr.value;
     userOptions.shadows = shadowOn.checked;
     var shadowRgb = hexToRgb(shadowColor.value);
     shadowRgb.a = 255;

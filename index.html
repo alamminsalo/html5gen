@@ -86,7 +86,11 @@
                 <p>Root color<input type="color" class="right" id="colorInput"/></p>
 
                 <p title="Randomise background color each generation time"><input type="checkbox" id="randColorOn"/>Randomize</p>
+
+				<p title="Background brightness">Brightness: <output></output><br/><input type="range" id="bgBr" min="0" max="255" oninput="updateInterfaceValue(this)"/>
+
                 <p title="Use only one color per layer. Note: Doesn't work with 'Pattern align' selected"><input type="checkbox" id="colorPerLayer"/>One per layer</p>
+
                 <p title="Evolve first color of the layer, rather than using always root color"><input type="checkbox" id="cmut"/>Recursive</p>
 
 				<p title="Color variation amount">Change amount: <output></output><br/><input type="range" id="colorCh" min="-255" max="255"

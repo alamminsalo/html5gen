@@ -1,6 +1,7 @@
 //Default preset
 function getSmoothCirclesPreset(){
 	return {
+		brightness: 55,
 		align: true,
 		blurAmount: 80,
 		noiseOpacity: 0,
@@ -20,8 +21,8 @@ function getSmoothCirclesPreset(){
 		rootColor: {r: 2, g: 12, b: 15, a: 1},
 		randomColor: true,
 		colorPerLayer: false,
-		colorChAmt: 100,
-		colorAlpha: 150,
+		colorChAmt: 150,
+		colorAlpha: 180,
 		blurTop: false,
 		balanceColors: false,
 		colorMutate: true
@@ -30,6 +31,7 @@ function getSmoothCirclesPreset(){
 
 function getFlatCirclesPreset(){
 	return {
+		brightness: 180,
 		align: true,
 		blurAmount: 0,
 		noiseOpacity: 0,
@@ -59,9 +61,10 @@ function getFlatCirclesPreset(){
 
 function getFlatSquaresPreset(){
 	return {
-		align: false,
+		brightness: 200,
+		align: true,
 		blurAmount: 0,
-		noiseOpacity: 10,
+		noiseOpacity: 15,
 		shadows: false,
 		shadow_color: {r: 0, g: 0, b: 0, a: 255},
 		shadow_radius: 1,
@@ -78,16 +81,17 @@ function getFlatSquaresPreset(){
 		rootColor: getRandomColor(255),
 		randomColor: true,
 		colorPerLayer: false,
-		colorChAmt: 230,
+		colorChAmt: 15,
 		colorAlpha: 255,
 		blurTop: false,
 		balanceColors: false,
-		colorMutate: false,
+		colorMutate: true,
 	}
 }
 
 function getAmbientPreset(){
 	return {
+		brightness: 40,
 		align: true,
 		blurAmount: 128,
 		noiseOpacity: 0,
@@ -117,6 +121,7 @@ function getAmbientPreset(){
 
 function getHexPreset(){
 	return {
+		brightness: 20,
 		align: true,
 		blurAmount: 90,
 		noiseOpacity: 0,
@@ -136,8 +141,8 @@ function getHexPreset(){
 		rootColor: getRandomColor(255),
 		randomColor: true,
 		colorPerLayer: false,
-		colorChAmt: 205,
-		colorAlpha: 245,
+		colorChAmt: 255,
+		colorAlpha: 180,
 		blurTop: false,
 		balanceColors: false,
 		colorMutate: false 

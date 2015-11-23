@@ -64,7 +64,7 @@ function getRandomBackgroundColor(){
         r: clamp(0, 255, Math.floor(Math.random() * 50)),
         g: clamp(0, 255, Math.floor(Math.random() * 50)),
         b: clamp(0, 255, Math.floor(Math.random() * 50)),
-        a: alpha | userOptions.colorAlpha 
+        a: 255
     };
 }
 
@@ -94,6 +94,35 @@ function clamp(min, max, value){
 
 function rad(deg){
 	return deg * Math.PI / 180;
+}
+
+//Returns random bright color
+function getRandomBrightColor(brightness){
+	var r = Math.random() * 3;
+	var value = brightness;
+	var value2 = Math.floor(Math.random() * value);
+	var c = {r:255,g:255,b:255,a:255};
+	//Place random value to random component
+	if (r < 1){
+		c.r = value;
+		c.g = value2;
+		c.b = value - value2;
+	} else if (r < 2) {
+		c.b = value;
+		c.r = value2;
+		c.g = value - value2;
+	} else {
+		c.g = value;
+		c.b = value2;
+		c.r = value - value2;
+	}
+
+	//Clamp to rgb
+	c.r = clamp(0,255,c.r);
+	c.g = clamp(0,255,c.g);
+	c.b = clamp(0,255,c.b);
+
+	return c;
 }
 
 function getVariatedColor(color, amount) {

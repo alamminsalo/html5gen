@@ -29,7 +29,8 @@ function generate() {
     clear();
 
     if (userOptions.randomColor) {
-        userOptions.rootColor = getRandomBackgroundColor();
+        userOptions.rootColor = getRandomBrightColor(userOptions.brightness);
+		console.log(userOptions.rootColor);
     }
     colorInput.value = rgbToHex(userOptions.rootColor);
     shadowColor.value = rgbToHex(userOptions.shadow_color)
