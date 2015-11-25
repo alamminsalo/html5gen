@@ -195,6 +195,12 @@ function onPresetSelected(){
 			userOptions = getFlatCirclesPreset();
 			break;
 
+		case "flatc2":
+			userOptions = getFlatCircles2Preset();
+			break;
+
+		case "flats":
+
 		case "flats":
 			userOptions = getFlatSquaresPreset();
 			break;

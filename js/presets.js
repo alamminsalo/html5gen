@@ -47,7 +47,7 @@ function getFlatCirclesPreset(){
 		triangles: false,
 		squares: false,
 		circles: true,
-		size: 10 * screen.height / 768, //Some initial scaling to settings which looked nice on 1366x768 display
+		size: 14 * screen.height / 768, //Some initial scaling to settings which looked nice on 1366x768 display
 		rootColor: getRandomColor(255),
 		randomColor: true,
 		colorPerLayer: false,
@@ -56,6 +56,36 @@ function getFlatCirclesPreset(){
 		blurTop: false,
 		balanceColors: false,
 		colorMutate: false,
+	}
+}
+
+function getFlatCircles2Preset(){
+	return {
+		brightness: 175,
+		align: true,
+		blurAmount: 0,
+		noiseOpacity: 0,
+		shadows: false,
+		shadow_color: {r: 0, g: 0, b: 0, a: 255},
+		shadow_radius: 1,
+		shadow_offsetX: 0,
+		shadow_offsetY: 0,
+		objects_in_layer: 10,
+		depth: 3,
+		layers: 10,
+		hex: false,
+		triangles: false,
+		squares: false,
+		circles: true,
+		size: 14 * screen.height / 768, //Some initial scaling to settings which looked nice on 1366x768 display
+		rootColor: getRandomColor(255),
+		randomColor: true,
+		colorPerLayer: false,
+		colorChAmt: 50,
+		colorAlpha: 255,
+		blurTop: false,
+		balanceColors: false,
+		colorMutate: true,
 	}
 }
 
